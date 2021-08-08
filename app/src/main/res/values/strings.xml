@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Sary</string>
+
+    <!-- Main Navigation -->
+    <string name="store">Store</string>
+    <string name="orders">Orders</string>
+    <string name="my_page">My Page</string>
+
+    <string name="err_no_internet_connection">There is no internet connection</string>
+    <string name="error_unknown">Unknown Error</string>
+    <string name="retry">Retry</string>
+
+    <!-- a11y -->
+    <string name="a11y_previous" translatable="false">Previous</string>
+    <string name="a11y_next" translatable="false">Next</string>
+</resources>

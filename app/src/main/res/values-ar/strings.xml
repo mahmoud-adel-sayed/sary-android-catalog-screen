@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Sary</string>
+
+    <!-- Main Navigation -->
+    <string name="store">المتجر</string>
+    <string name="orders">الطلبات</string>
+    <string name="my_page">صفحتى</string>
+
+    <string name="err_no_internet_connection">لا يوجد اتصال بالانترنت</string>
+    <string name="error_unknown">خطأ غير معلوم</string>
+    <string name="retry">اعد المحاولة</string>
+</resources>

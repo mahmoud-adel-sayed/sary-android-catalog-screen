@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- CONSIDER REPLACING WITH viewPager2 -->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- Previous Arrow -->
+    <ImageView
+        android:id="@+id/btn_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_small"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:background="@drawable/circle_black_translucent"
+        app:srcCompat="@drawable/ic_previous"
+        android:contentDescription="@string/a11y_previous"/>
+
+    <!-- Next Arrow -->
+    <ImageView
+        android:id="@+id/btn_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_small"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:background="@drawable/circle_black_translucent"
+        app:srcCompat="@drawable/ic_next"
+        android:contentDescription="@string/a11y_next"/>
+
+    <!-- Bullets -->
+    <LinearLayout
+        android:id="@+id/bullets_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layoutDirection="ltr"/>
+</RelativeLayout>
