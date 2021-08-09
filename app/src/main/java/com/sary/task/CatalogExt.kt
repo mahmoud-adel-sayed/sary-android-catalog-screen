@@ -38,6 +38,7 @@ fun CatalogSection.createTitle(context: Activity): TextView? {
 }
 
 fun CatalogSection.createRecyclerView(context: Context): RecyclerView = RecyclerView(context).apply {
+    isNestedScrollingEnabled = false
     overScrollMode = View.OVER_SCROLL_NEVER
     layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
     val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics)

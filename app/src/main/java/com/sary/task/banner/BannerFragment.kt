@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -34,7 +34,7 @@ class BannerFragment : Fragment() {
     lateinit var bulletsIndicator: LinearLayout
 
     @BindView(R.id.view_pager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: ViewPager // TODO: Replace it with ViewPager2
 
     private lateinit var slideViews: Array<View>
     private lateinit var slideFragments: Array<Fragment>
@@ -231,7 +231,7 @@ class BannerFragment : Fragment() {
 
     private inner class PagerAdapter(
         fm: FragmentManager
-    ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    ) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getCount(): Int = slideFragments.size
 
@@ -256,6 +256,11 @@ class BannerFragment : Fragment() {
 
 class BannerItemFragment : Fragment() {
     private lateinit var itemView: View
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -18,11 +18,17 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // We could use the navigation component (Jetpack library) to simplify
+        // management of fragments & the app navigation
+        var storeFragment: Fragment? = supportFragmentManager.findFragmentByTag(TAG_STORE_FRAGMENT)
+        if (storeFragment == null) {
+            storeFragment = StoreFragment()
+        }
+        replaceFragment(fragment = storeFragment, tag = TAG_STORE_FRAGMENT)
+
         // Create some empty fragments for presentation purposes
-        val storeFragment = StoreFragment()
         val ordersFragment = EmptyFragment()
         val myPageFragment = EmptyFragment()
-        replaceFragment(storeFragment)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener {
@@ -35,8 +41,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit()
+    private fun replaceFragment(
+        fragment: Fragment,
+        tag: String? = null
+    ) {
+        supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment, tag).commit()
     }
 
     override fun supportFragmentInjector() = dispatchingAndroidInjector
@@ -46,3 +55,5 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
  * A simple empty [Fragment].
  */
 class EmptyFragment : Fragment()
+
+private const val TAG_STORE_FRAGMENT = "storeFragment"
