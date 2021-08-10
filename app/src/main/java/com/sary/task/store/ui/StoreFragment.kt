@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.sary.task.*
-import com.sary.task.banner.BannerFragment
+import com.sary.task.banner.BannerView
 import com.sary.task.banner.ImageLoadingListener
 import com.sary.task.di.Injectable
 import com.sary.task.store.data.model.Banner
@@ -32,6 +32,9 @@ class StoreFragment : Fragment(), Injectable {
 
     @BindView(R.id.root)
     lateinit var root: View
+
+    @BindView(R.id.banner)
+    lateinit var bannerView: BannerView
 
     @BindView(R.id.catalog_container)
     lateinit var catalogContainer: LinearLayout
@@ -94,8 +97,7 @@ class StoreFragment : Fragment(), Injectable {
 
     private fun setupBanners(banners: List<Banner>) {
         val slides = Array(banners.size) { i -> getSlideView(banners[i]) }
-        val banner = BannerFragment.newInstance(slideViews = slides)
-        childFragmentManager.beginTransaction().replace(R.id.banner_frame, banner).commit()
+        bannerView.setSlides(slides)
     }
 
     // Dynamic Content: we can render different kinds of views in the banner/slider

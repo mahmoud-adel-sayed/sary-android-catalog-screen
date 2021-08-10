@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BannerView">
+        <attr name="showArrows" format="boolean"/>
+        <attr name="showBullets" format="boolean"/>
+        <attr name="autoScrollEnabled" format="boolean"/>
+        <attr name="slideShowDuration" format="integer"/>
+        <attr name="activeBulletColor" format="color"/>
+        <attr name="inactiveBulletColor" format="color"/>
+    </declare-styleable>
+</resources>

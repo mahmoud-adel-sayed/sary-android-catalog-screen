@@ -18,11 +18,17 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
             app:cardElevation="0dp"
-            app:cardCornerRadius="@dimen/banner_corner_radius">
+            app:cardCornerRadius="@dimen/banner_corner_radius"
+            app:cardBackgroundColor="#eee">
 
-            <FrameLayout
-                android:id="@+id/banner_frame"
-                style="@style/Banner"/>
+            <com.sary.task.banner.BannerView
+                android:id="@+id/banner"
+                style="@style/Banner"
+                app:showArrows="false"
+                app:showBullets="true"
+                app:autoScrollEnabled="true"
+                app:activeBulletColor="@color/white"
+                app:inactiveBulletColor="@color/gray" />
         </androidx.cardview.widget.CardView>
 
         <!-- Catalog Container -->
