@@ -7,6 +7,10 @@ Design and implementation of Sary app (flagship) Catalog screen.
 ### Implementation
 The implementation is written in __Kotlin__. The app uses two APIs [Banner API](https://staging.sary.co/api/v2.5.1/baskets/76097/banners) & [Catalog API](https://staging.sary.co/api/v2.5.1/baskets/76097/catalog/) to render the store screen. The design of the store screen has small differences from the real app's screen (I do not have access to the Zeplin Design). The Authorization token is embedded in the source code only for presentation purposes. The catalog section `ui_type` (*type*: __slide__) is implemented as a horizontal scrollable list (the task does not describe or show the design).
 
+### Implementation Optimizations
+1. we could create a custom view for the banner/slider instead of using a `Fragment`.
+2. we could replace the `NestedScrollView` with a parent `RecyclerView` & child `RecyclerView`s (one for each catalog section).
+
 ### APK & Video Links
 1. APK link: <https://drive.google.com/file/d/1ESzi3oclEa1VBnqj-k9ONPBpi_0Rlzac/view?usp=sharing>.
 2. Video link: <https://drive.google.com/file/d/16U9SsZOCdQvnDgQQpCpr0LeDTIUr8jnp/view?usp=sharing>.
