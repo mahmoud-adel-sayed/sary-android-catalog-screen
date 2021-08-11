@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:fillViewport="true">
+    android:layout_width="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,11 +30,11 @@
                 app:inactiveBulletColor="@color/gray" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Catalog Container -->
-        <LinearLayout
-            android:id="@+id/catalog_container"
+        <!-- Catalog Sections -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_catalog_sections"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
