@@ -6,21 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.sary.task.*
+import com.sary.task.R
 import com.sary.task.banner.BannerView
 import com.sary.task.banner.ImageLoadingListener
 import com.sary.task.di.Injectable
+import com.sary.task.loadImage
+import com.sary.task.showSnackBar
 import com.sary.task.store.data.model.Banner
-import com.sary.task.store.data.model.CatalogSection
 import com.sary.task.util.Response
 import javax.inject.Inject
 
@@ -36,10 +38,16 @@ class StoreFragment : Fragment(), Injectable {
     @BindView(R.id.banner)
     lateinit var bannerView: BannerView
 
-    @BindView(R.id.catalog_container)
-    lateinit var catalogContainer: LinearLayout
+    @BindView(R.id.rv_catalog_sections)
+    lateinit var catalogSectionsRV: RecyclerView
 
+    private lateinit var catalogSectionsAdapter: CatalogSectionsAdapter
     private val viewModel by viewModels<StoreViewModel> { viewModelFactory }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        catalogSectionsAdapter = CatalogSectionsAdapter(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +56,7 @@ class StoreFragment : Fragment(), Injectable {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_store, container, false)
         ButterKnife.bind(this, view)
+        setupCatalogSections()
         observeData()
         return view
     }
@@ -55,6 +64,12 @@ class StoreFragment : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.getBanners()
         viewModel.getCatalog()
+    }
+
+    private fun setupCatalogSections() = with(catalogSectionsRV) {
+        isNestedScrollingEnabled = false
+        layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        adapter = catalogSectionsAdapter
     }
 
     private fun observeData() {
@@ -77,9 +92,7 @@ class StoreFragment : Fragment(), Injectable {
 
         viewModel.catalog.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is Response.Success -> {
-                    it.data.result.forEach { section -> addCatalogSection(section) }
-                }
+                is Response.Success -> catalogSectionsAdapter.replaceData(it.data.result)
                 is Response.Error -> {
                     // TODO: Find a better way to show errors.
                     it.message?.let { message ->
@@ -112,10 +125,5 @@ class StoreFragment : Fragment(), Injectable {
             listener = ImageLoadingListener(view.findViewById<ProgressBar>(R.id.progress))
         )
         return view
-    }
-
-    private fun addCatalogSection(section: CatalogSection) {
-        section.createTitle(requireActivity())?.let { catalogContainer.addView(it) }
-        catalogContainer.addView(section.createRecyclerView(requireContext()))
     }
 }
