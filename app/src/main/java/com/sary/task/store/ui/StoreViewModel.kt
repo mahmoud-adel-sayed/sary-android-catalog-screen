@@ -11,17 +11,17 @@ class StoreViewModel @Inject constructor(
     private val repository: StoreRepository
 ) : ViewModel() {
 
-    private val _banners: MutableLiveData<String> = MutableLiveData()
-    val banners = _banners.switchMap { repository.getBanners() }
+    private val _bannerItems: MutableLiveData<String> = MutableLiveData()
+    val bannerItems = _bannerItems.switchMap { repository.getBannerItems() }
 
     private val _catalog: MutableLiveData<String> = MutableLiveData()
     val catalog = _catalog.switchMap { repository.getCatalog() }
 
-    fun getBanners() {
-        if (banners.value is Response.Success) {
+    fun getBannerItems() {
+        if (bannerItems.value is Response.Success) {
             return
         }
-        _banners.value = ""
+        _bannerItems.value = ""
     }
 
     fun getCatalog() {

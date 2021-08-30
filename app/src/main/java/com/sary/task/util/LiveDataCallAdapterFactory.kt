@@ -14,9 +14,9 @@ import retrofit2.Response as RetrofitResponse
 
 class LiveDataCallAdapterFactory(private val app: Application) : Factory() {
     override fun get(
-            returnType: Type,
-            annotations: Array<Annotation>,
-            retrofit: Retrofit
+        returnType: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
     ): CallAdapter<*, *>? {
         if (getRawType(returnType) != LiveData::class.java) {
             return null
@@ -38,8 +38,8 @@ class LiveDataCallAdapterFactory(private val app: Application) : Factory() {
  * A Retrofit adapter that converts the Call into a LiveData of [Response].
 */
 private class LiveDataCallAdapter<R>(
-        private val app: Application,
-        private val responseType: Type
+    private val app: Application,
+    private val responseType: Type
 ) : CallAdapter<R, LiveData<Response<R>>> {
 
     override fun responseType() = responseType

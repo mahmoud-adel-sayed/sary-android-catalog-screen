@@ -28,7 +28,7 @@ sealed class Response<out D> {
 
         @JvmStatic
         fun <T> create(app: Application, throwable: Throwable): Response<T> =
-                Error(message = ErrorHandler.getMessage(app, throwable))
+            Error(message = ErrorHandler.getMessage(app, throwable))
     }
 }
 

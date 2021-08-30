@@ -22,7 +22,7 @@ import com.sary.task.banner.ImageLoadingListener
 import com.sary.task.di.Injectable
 import com.sary.task.loadImage
 import com.sary.task.showSnackBar
-import com.sary.task.store.data.model.Banner
+import com.sary.task.store.data.model.BannerItem
 import com.sary.task.util.Response
 import javax.inject.Inject
 
@@ -62,7 +62,7 @@ class StoreFragment : Fragment(), Injectable {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.getBanners()
+        viewModel.getBannerItems()
         viewModel.getCatalog()
     }
 
@@ -73,16 +73,16 @@ class StoreFragment : Fragment(), Injectable {
     }
 
     private fun observeData() {
-        viewModel.banners.observe(viewLifecycleOwner, Observer {
+        viewModel.bannerItems.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is Response.Success -> setupBanners(it.data.result)
+                is Response.Success -> setupBanner(it.data.result)
                 is Response.Error -> {
                     // TODO: Find a better way to show errors.
                     it.message?.let { message ->
                         root.showSnackBar(
                             message = "Error Showing Banners: $message",
                             actionLabel = getString(R.string.retry),
-                            action = { viewModel.getBanners() }
+                            action = { viewModel.getBannerItems() }
                         )
                     }
                 }
@@ -108,20 +108,20 @@ class StoreFragment : Fragment(), Injectable {
         })
     }
 
-    private fun setupBanners(banners: List<Banner>) {
-        val slides = Array(banners.size) { i -> getSlideView(banners[i]) }
+    private fun setupBanner(banner: List<BannerItem>) {
+        val slides = Array(banner.size) { i -> getSlideView(banner[i]) }
         bannerView.setSlides(slides)
     }
 
     // Dynamic Content: we can render different kinds of views in the banner/slider
-    private fun getSlideView(banner: Banner): View {
+    private fun getSlideView(bannerItem: BannerItem): View {
         val context = requireContext()
         @SuppressLint("InflateParams")
         val view = layoutInflater.inflate(R.layout.banner_slide, null)
-        view.setOnClickListener { Toast.makeText(context, banner.link, Toast.LENGTH_SHORT).show() }
+        view.setOnClickListener { Toast.makeText(context, bannerItem.link, Toast.LENGTH_SHORT).show() }
         view.findViewById<ImageView>(R.id.slide_image).loadImage(
             context = context,
-            imageUrl = banner.imageUrl,
+            imageUrl = bannerItem.imageUrl,
             listener = ImageLoadingListener(view.findViewById<ProgressBar>(R.id.progress))
         )
         return view
