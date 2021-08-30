@@ -1,6 +1,7 @@
 package com.sary.task.store.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,8 @@ import butterknife.ButterKnife
 import com.sary.task.R
 import com.sary.task.banner.BannerView
 import com.sary.task.banner.ImageLoadingListener
+import com.sary.task.banner.Slide
+import com.sary.task.banner.SlideView
 import com.sary.task.di.Injectable
 import com.sary.task.loadImage
 import com.sary.task.showSnackBar
@@ -109,21 +112,37 @@ class StoreFragment : Fragment(), Injectable {
     }
 
     private fun setupBanner(banner: List<BannerItem>) {
-        val slides = Array(banner.size) { i -> getSlideView(banner[i]) }
-        bannerView.setSlides(slides)
-    }
-
-    // Dynamic Content: we can render different kinds of views in the banner/slider
-    private fun getSlideView(bannerItem: BannerItem): View {
         val context = requireContext()
-        @SuppressLint("InflateParams")
-        val view = layoutInflater.inflate(R.layout.banner_slide, null)
-        view.setOnClickListener { Toast.makeText(context, bannerItem.link, Toast.LENGTH_SHORT).show() }
-        view.findViewById<ImageView>(R.id.slide_image).loadImage(
-            context = context,
-            imageUrl = bannerItem.imageUrl,
-            listener = ImageLoadingListener(view.findViewById<ProgressBar>(R.id.progress))
+        val slides = List(banner.size) { i ->
+            Slide(
+                imageUrl = banner[i].imageUrl,
+                onClick = { Toast.makeText(context, banner[i].link, Toast.LENGTH_SHORT).show() }
+            )
+        }
+        bannerView.setSlides(
+            slides = slides,
+            onSlideView = { inflater, viewGroup -> BannerItemView(context, inflater, viewGroup) }
         )
-        return view
+    }
+}
+
+private class BannerItemView(
+    private val context: Context,
+    layoutInflater: LayoutInflater,
+    container: ViewGroup?
+) : SlideView() {
+    private val _view = layoutInflater.inflate(R.layout.banner_slide, container, false)
+    private val imageView = _view.findViewById<ImageView>(R.id.slide_image)
+    private val progress = _view.findViewById<ProgressBar>(R.id.progress)
+
+    override val view: View get() = _view
+
+    override fun bind(position: Int, slide: Slide) {
+        view.setOnClickListener { slide.onClick() }
+        imageView.loadImage(
+            context = context,
+            imageUrl = slide.imageUrl,
+            listener = ImageLoadingListener(progress)
+        )
     }
 }

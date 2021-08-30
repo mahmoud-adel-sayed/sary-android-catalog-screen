@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Html
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -12,9 +13,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.ConfigurationCompat
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.sary.task.R
 
 @Suppress("unused")
@@ -27,10 +27,9 @@ class BannerView @JvmOverloads constructor(
     private val nextBTN: View
     private val previousBTN: View
     private val bulletsIndicator: LinearLayout
-    private val viewPager: ViewPager // TODO: Replace it with ViewPager2
+    private val viewPager: ViewPager2
 
-    private var slideViews: Array<View> = arrayOf()
-    private val pagerAdapter: BannerPagerAdapter
+    private var slides: List<Slide> = emptyList()
     private var bullets: Array<TextView>? = null
 
     private val properties: Properties
@@ -39,18 +38,21 @@ class BannerView @JvmOverloads constructor(
     private var slideShowHandler: Handler? = null
     private var slideShowRunnable: Runnable = Runnable { }
     private var isDragging = false
-    private var duration = 0L // in milliseconds
     private var isFirstSlide = true
     private var isLastSlide = false
 
     interface Listener {
-        fun onSlideSelected(view: View?, position: Int, isLastSlide: Boolean) { }
+        fun onSlideSelected(slide: Slide, position: Int, isLastSlide: Boolean) { }
     }
 
     init {
         val view = inflate(context, R.layout.banner_layout, this)
-        nextBTN = view.findViewById(R.id.btn_next)
-        previousBTN = view.findViewById(R.id.btn_previous)
+        nextBTN = view.findViewById<View>(R.id.btn_next).also {
+            it.setOnClickListener { onNext(fromArrow = true) }
+        }
+        previousBTN = view.findViewById<View>(R.id.btn_previous).also {
+            it.setOnClickListener { onPrevious() }
+        }
         bulletsIndicator = view.findViewById(R.id.bullets_indicator)
         viewPager = view.findViewById(R.id.view_pager)
 
@@ -69,7 +71,6 @@ class BannerView @JvmOverloads constructor(
                 ResourcesCompat.getColor(resources, R.color.gray, null)
             )
             properties = Properties(
-                isRtl = ConfigurationCompat.getLocales(resources.configuration)[0].language == "ar",
                 showArrows = showArrows,
                 showBullets = showBullets,
                 autoScrollEnabled = autoScrollEnabled,
@@ -83,16 +84,14 @@ class BannerView @JvmOverloads constructor(
 
         showArrows(show = properties.showArrows)
         bulletsIndicator.visibility = if (properties.showBullets) View.VISIBLE else View.GONE
-
-        setupSlideShow()
-        pagerAdapter = BannerPagerAdapter()
+        setSlideShow(enabled = properties.autoScrollEnabled)
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
             // onResume() called
-            slideShowHandler?.postDelayed(slideShowRunnable, duration)
+            slideShowHandler?.postDelayed(slideShowRunnable, properties.slideShowDuration)
         } else {
             // onPause() called
             slideShowHandler?.removeCallbacks(slideShowRunnable)
@@ -103,89 +102,124 @@ class BannerView @JvmOverloads constructor(
         this.listener = listener
     }
 
-    val showArrows: Boolean get() = properties.showArrows
+    var showArrows: Boolean
+        get() = properties.showArrows
+        set(value) {
+            properties.showArrows = value
+            showArrows(show = value)
+            invalidate()
+            requestLayout()
+        }
 
-    val showBullets: Boolean get() = properties.showBullets
+    var showBullets: Boolean
+        get() = properties.showBullets
+        set(value) {
+            properties.showBullets = value
+            bulletsIndicator.visibility = if (value) View.VISIBLE else View.GONE
+            invalidate()
+            requestLayout()
+        }
 
-    val isAutoScrollEnabled: Boolean get() = properties.autoScrollEnabled
+    var isAutoScrollEnabled: Boolean
+        get() = properties.autoScrollEnabled
+        set(value) {
+            properties.autoScrollEnabled = value
+            setSlideShow(enabled = value)
+            invalidate()
+            requestLayout()
+        }
 
-    val slideShowDuration: Long get() = properties.slideShowDuration
+    var slideShowDuration: Long
+        get() = properties.slideShowDuration
+        set(value) {
+            properties.slideShowDuration = value
+            resetSlideShow()
+            invalidate()
+            requestLayout()
+        }
 
-    val activeBulletColor: Int
+    var activeBulletColor: Int
         @ColorInt
         get() = properties.activeBulletColor
+        set(@ColorInt value) {
+            properties.activeBulletColor = value
+            activateBullet(viewPager.currentItem)
+            invalidate()
+            requestLayout()
+        }
 
-    val inactiveBulletColor: Int
+    var inactiveBulletColor: Int
         @ColorInt
         get() = properties.inactiveBulletColor
-
-    fun setSlides(views: Array<View>) {
-        if (views.isEmpty()) {
-            return
+        set(@ColorInt value) {
+            properties.inactiveBulletColor = value
+            activateBullet(viewPager.currentItem)
+            invalidate()
+            requestLayout()
         }
-        if (views.size == 1) {
+
+    fun setSlides(
+        slides: List<Slide>,
+        onSlideView: (LayoutInflater, ViewGroup?) -> SlideView
+    ) {
+        if (slides.size == 1) {
             showArrows(show = false)
         }
-        slideViews = views
+        this.slides = slides
         resetSlideShow()
         setupBulletsIndicator()
-        setupViewPager()
-        pagerAdapter.notifyDataSetChanged()
+        setupViewPager(BannerPagerAdapter(slides, onSlideView))
         invalidate()
         requestLayout()
     }
 
-    private fun setupSlideShow() {
-        if (properties.autoScrollEnabled) {
-            duration = properties.slideShowDuration
+    private fun setSlideShow(enabled: Boolean) {
+        if (enabled) {
             slideShowHandler = Handler(Looper.getMainLooper())
             slideShowRunnable = Runnable {
                 onNext()
-                slideShowHandler?.postDelayed(slideShowRunnable, duration)
+                slideShowHandler?.postDelayed(slideShowRunnable, properties.slideShowDuration)
             }
+        } else {
+            slideShowHandler?.removeCallbacks(slideShowRunnable)
+            slideShowHandler = null
+            slideShowRunnable = Runnable { }
         }
     }
 
-    private fun setupViewPager() {
+    private fun setupViewPager(pagerAdapter: BannerPagerAdapter) {
         with(viewPager) {
-            offscreenPageLimit = pagerAdapter.count
+            offscreenPageLimit = pagerAdapter.itemCount
             adapter = pagerAdapter
-            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                override fun onPageScrolled(
-                    position: Int,
-                    positionOffset: Float,
-                    positionOffsetPixels: Int
-                ) { }
-
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     isFirstSlide = isFirstSlide(position)
                     isLastSlide = isLastSlide(position)
                     activateBullet(position)
                     checkArrows()
-                    val view = slideViews[position]
-                    listener?.onSlideSelected(view, getLocaleBasedPosition(position), isLastSlide)
+                    listener?.onSlideSelected(slides[position], position, isLastSlide)
                 }
 
                 override fun onPageScrollStateChanged(state: Int) {
-                    if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
                         slideShowHandler?.removeCallbacks(slideShowRunnable)
                         isDragging = true
                     }
-                    else if (state == ViewPager.SCROLL_STATE_SETTLING && isDragging) {
-                        slideShowHandler?.postDelayed(slideShowRunnable, duration)
+                    else if (state == ViewPager2.SCROLL_STATE_SETTLING && isDragging) {
+                        slideShowHandler?.postDelayed(slideShowRunnable, properties.slideShowDuration)
                         isDragging = false
                     }
                 }
             })
             // Activate the first page
-            currentItem = getLocaleBasedPosition(0)
+            currentItem = 0
         }
     }
 
     private fun setupBulletsIndicator() {
         if (properties.showBullets) {
             bulletsIndicator.removeAllViews()
-            bullets = Array(slideViews.size) {
+            bullets = Array(slides.size) {
                 val textView = TextView(context).apply {
                     @Suppress("DEPRECATION")
                     text = Html.fromHtml("&#8226;")
@@ -196,7 +230,10 @@ class BannerView @JvmOverloads constructor(
                 textView
             }
             // Activate the first bullet
-            bullets!![getLocaleBasedPosition(0)].setTextColor(properties.activeBulletColor)
+            val bulletsList = bullets!!
+            if (bulletsList.isNotEmpty()) {
+                bulletsList[0].setTextColor(properties.activeBulletColor)
+            }
         }
     }
 
@@ -205,22 +242,16 @@ class BannerView @JvmOverloads constructor(
             return
         }
         val bulletsList = bullets!!
-        for (bullet in bulletsList) {
-            bullet.setTextColor(properties.inactiveBulletColor)
+        bulletsList.forEach { it.setTextColor(properties.inactiveBulletColor) }
+        if (bulletsList.isNotEmpty()) {
+            bulletsList[position].setTextColor(properties.activeBulletColor)
         }
-        bulletsList[position].setTextColor(properties.activeBulletColor)
     }
 
     private fun showArrows(show: Boolean) {
         if (show) {
-            with(nextBTN) {
-                visibility = View.VISIBLE
-                setOnClickListener { onNext(fromArrow = true) }
-            }
-            with(previousBTN) {
-                visibility = View.GONE
-                setOnClickListener { onPrevious() }
-            }
+            nextBTN.visibility = View.VISIBLE
+            previousBTN.visibility = View.VISIBLE
         } else {
             nextBTN.visibility = View.GONE
             previousBTN.visibility = View.GONE
@@ -247,16 +278,11 @@ class BannerView @JvmOverloads constructor(
 
     private fun onNext(fromArrow: Boolean = false) {
         if (isLastSlide) {
-            viewPager.setCurrentItem(getLocaleBasedPosition(0), true)
+            viewPager.setCurrentItem(0, true)
             return
         }
         var currentIndex = viewPager.currentItem
-        if (properties.isRtl) {
-            currentIndex--
-        } else {
-            currentIndex++
-        }
-        viewPager.setCurrentItem(currentIndex, true)
+        viewPager.setCurrentItem(++currentIndex, true)
         if (fromArrow) {
             resetSlideShow()
         }
@@ -264,12 +290,7 @@ class BannerView @JvmOverloads constructor(
 
     private fun onPrevious(fromArrow: Boolean = true) {
         var currentIndex = viewPager.currentItem
-        if (properties.isRtl) {
-            currentIndex++
-        } else {
-            currentIndex--
-        }
-        viewPager.setCurrentItem(currentIndex, true)
+        viewPager.setCurrentItem(--currentIndex, true)
         if (fromArrow) {
             resetSlideShow()
         }
@@ -277,44 +298,53 @@ class BannerView @JvmOverloads constructor(
 
     private fun selectSlide(position: Int) {
         resetSlideShow()
-        viewPager.setCurrentItem(getLocaleBasedPosition(position), true)
+        viewPager.setCurrentItem(position, true)
     }
 
     private fun resetSlideShow() {
         slideShowHandler?.removeCallbacks(slideShowRunnable)
-        slideShowHandler?.postDelayed(slideShowRunnable, duration)
+        slideShowHandler?.postDelayed(slideShowRunnable, properties.slideShowDuration)
     }
 
-    private fun getLocaleBasedPosition(position: Int): Int =
-        if (properties.isRtl) pagerAdapter.count - position - 1 else position
+    private fun isFirstSlide(position: Int) = (position == 0)
 
-    private fun isFirstSlide(position: Int): Boolean = getLocaleBasedPosition(position) == 0
+    private fun isLastSlide(position: Int) = (position == slides.size - 1)
 
-    private fun isLastSlide(position: Int): Boolean =
-        getLocaleBasedPosition(position) == (pagerAdapter.count - 1)
+    private class BannerPagerAdapter(
+        private val slides: List<Slide>,
+        private val onSlideView: (LayoutInflater, ViewGroup?) -> SlideView
+    ) : RecyclerView.Adapter<BannerPagerAdapter.SlideViewHolder>() {
 
-    private inner class BannerPagerAdapter : PagerAdapter() {
-
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val view = slideViews[getLocaleBasedPosition(position)]
-            container.addView(view)
-            return view
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SlideViewHolder {
+            return SlideViewHolder(onSlideView(LayoutInflater.from(parent.context), parent))
         }
 
-        override fun isViewFromObject(v: View, o: Any): Boolean = (v == o)
+        override fun onBindViewHolder(holder: SlideViewHolder, position: Int) {
+            holder.bind(position, slides[position])
+        }
 
-        override fun getCount(): Int = slideViews.size
+        override fun getItemCount() = slides.size
 
-        override fun destroyItem(container: View, position: Int, o: Any) { }
+        class SlideViewHolder(
+            private val slideView: SlideView
+        ) : RecyclerView.ViewHolder(slideView.view) {
+            internal fun bind(position: Int, slide: Slide) = slideView.bind(position, slide)
+        }
     }
 }
 
+data class Slide(val imageUrl: String? = null, val onClick: () -> Unit = { })
+
+abstract class SlideView {
+    abstract val view: View
+    abstract fun bind(position: Int, slide: Slide)
+}
+
 private data class Properties(
-    val isRtl: Boolean,
-    val showArrows: Boolean,
-    val showBullets: Boolean,
-    val autoScrollEnabled: Boolean,
-    val slideShowDuration: Long,
-    @ColorInt val activeBulletColor: Int,
-    @ColorInt val inactiveBulletColor: Int
+    var showArrows: Boolean,
+    var showBullets: Boolean,
+    var autoScrollEnabled: Boolean,
+    var slideShowDuration: Long,
+    @ColorInt var activeBulletColor: Int,
+    @ColorInt var inactiveBulletColor: Int
 )

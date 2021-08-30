@@ -13,8 +13,7 @@
 
         <!-- Banner -->
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/Banner"
             android:layout_margin="@dimen/activity_horizontal_margin"
             app:cardElevation="0dp"
             app:cardCornerRadius="@dimen/banner_corner_radius"
@@ -22,7 +21,8 @@
 
             <com.sary.task.banner.BannerView
                 android:id="@+id/banner"
-                style="@style/Banner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 app:showArrows="false"
                 app:showBullets="true"
                 app:autoScrollEnabled="true"
