@@ -2,55 +2,52 @@ package com.sary.task.store.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.view.ViewGroup.LayoutParams
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.sary.task.R
+import com.bumptech.glide.request.RequestOptions
+import com.sary.task.*
 import com.sary.task.banner.BannerView
 import com.sary.task.banner.ImageLoadingListener
 import com.sary.task.banner.Slide
 import com.sary.task.banner.SlideView
 import com.sary.task.di.Injectable
-import com.sary.task.loadImage
-import com.sary.task.showSnackBar
 import com.sary.task.store.data.model.BannerItem
+import com.sary.task.store.data.model.CatalogSection
+import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_BANNER
+import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_GROUP
+import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_SMART
+import com.sary.task.store.data.model.SectionItem
 import com.sary.task.util.Response
 import javax.inject.Inject
 
-@SuppressLint("NonConstantResourceId")
+@SuppressLint("NonConstantResourceId", "InflateParams")
 class StoreFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @BindView(R.id.root)
-    lateinit var root: View
+    lateinit var root: ViewGroup
 
     @BindView(R.id.banner)
     lateinit var bannerView: BannerView
 
-    @BindView(R.id.rv_catalog_sections)
-    lateinit var catalogSectionsRV: RecyclerView
+    @BindView(R.id.catalog_sections)
+    lateinit var catalogSectionsContainer: LinearLayout
 
-    private lateinit var catalogSectionsAdapter: CatalogSectionsAdapter
     private val viewModel by viewModels<StoreViewModel> { viewModelFactory }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        catalogSectionsAdapter = CatalogSectionsAdapter(requireContext())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +56,6 @@ class StoreFragment : Fragment(), Injectable {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_store, container, false)
         ButterKnife.bind(this, view)
-        setupCatalogSections()
         observeData()
         return view
     }
@@ -67,12 +63,6 @@ class StoreFragment : Fragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.getBannerItems()
         viewModel.getCatalog()
-    }
-
-    private fun setupCatalogSections() = with(catalogSectionsRV) {
-        isNestedScrollingEnabled = false
-        layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        adapter = catalogSectionsAdapter
     }
 
     private fun observeData() {
@@ -95,7 +85,7 @@ class StoreFragment : Fragment(), Injectable {
 
         viewModel.catalog.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is Response.Success -> catalogSectionsAdapter.replaceData(it.data.result)
+                is Response.Success -> constructCatalog(it.data.result)
                 is Response.Error -> {
                     // TODO: Find a better way to show errors.
                     it.message?.let { message ->
@@ -123,6 +113,102 @@ class StoreFragment : Fragment(), Injectable {
             slides = slides,
             onSlideView = { inflater, viewGroup -> BannerItemView(context, inflater, viewGroup) }
         )
+    }
+
+    private fun constructCatalog(sections: List<CatalogSection>) {
+        sections.forEach { section ->
+            val container = layoutInflater.inflate(R.layout.catalog_section, null)
+            val title = container.findViewById<TextView>(R.id.title)
+            if (section.showTitle) {
+                title.text = section.title
+            } else {
+                title.visibility = View.GONE
+            }
+            if (section.dataType == DATA_TYPE_SMART) {
+                container.setBackgroundColor(Color.parseColor("#EEEEEE"))
+            }
+            val column = container.findViewById<LinearLayout>(R.id.section_items)
+            section addTo column
+            catalogSectionsContainer.addView(container)
+        }
+    }
+
+    private infix fun CatalogSection.addTo(column: LinearLayout) {
+        column.orientation = LinearLayout.VERTICAL
+        when (uiType) {
+            CatalogSection.UI_TYPE_GRID -> {
+                val edgePadding = (12 * 2)
+                val itemSize = (getScreenSizeInPixels() - edgePadding.toPx.toInt()) / rowCount
+
+                val rowsCount = (data.size + rowCount - 1) / rowCount
+                for (i in 0 until rowsCount) {
+                    val row = LinearLayout(requireContext()).also {
+                        it.orientation = LinearLayout.HORIZONTAL
+                    }
+                    for (j in 0 until rowCount) {
+                        val index = i * rowCount + j
+                        if (index >= data.size) {
+                            break
+                        }
+                        row.addView(
+                            createSectionItem(
+                                size = itemSize, dataType = this.dataType, item = data[index]
+                            )
+                        )
+                    }
+                    column.addView(row)
+                }
+            }
+            CatalogSection.UI_TYPE_LINEAR -> {
+                column.gravity = Gravity.CENTER_HORIZONTAL
+                val itemSize = getScreenSizeInPixels() / 2
+                data.forEach { item ->
+                    column.addView(
+                        createSectionItem(size = itemSize, dataType = this.dataType, item = item)
+                    )
+                }
+            }
+            CatalogSection.UI_TYPE_SLIDER -> {
+                TODO("Implement it later")
+            }
+        }
+    }
+
+    private fun createSectionItem(size: Int, dataType: String, item: SectionItem): View? {
+        return when (dataType) {
+            DATA_TYPE_SMART -> {
+                layoutInflater.inflate(R.layout.smart_section_item, null).apply {
+                    layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                    findViewById<ImageView>(R.id.image).loadImage(
+                        context = requireContext(),
+                        requestOptions = RequestOptions.overrideOf(75),
+                        imageUrl = item.imageUrl
+                    )
+                    findViewById<TextView>(R.id.title).text = item.name
+                }
+            }
+            DATA_TYPE_GROUP -> {
+                layoutInflater.inflate(R.layout.group_section_item, null).apply {
+                    layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                    findViewById<ImageView>(R.id.image).loadImage(
+                        context = requireContext(),
+                        requestOptions = RequestOptions.overrideOf(size),
+                        imageUrl = item.imageUrl
+                    )
+                }
+            }
+            DATA_TYPE_BANNER -> {
+                layoutInflater.inflate(R.layout.banner_section_item, null).apply {
+                    layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                    findViewById<ImageView>(R.id.image).loadImage(
+                        context = requireContext(),
+                        requestOptions = RequestOptions.overrideOf(size),
+                        imageUrl = item.imageUrl
+                    )
+                }
+            }
+            else -> null
+        }
     }
 }
 

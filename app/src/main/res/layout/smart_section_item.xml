@@ -2,10 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/margin_small"
-    android:layout_marginEnd="@dimen/margin_small"
     android:orientation="vertical"
     tools:ignore="UseCompoundDrawables">
 
@@ -18,13 +16,19 @@
 
         <ImageView
             android:id="@+id/image"
-            style="@style/SmartSectionItemImage"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             tools:src="@drawable/favorites"
             tools:ignore="ContentDescription" />
     </FrameLayout>
 
     <TextView
         android:id="@+id/title"
-        style="@style/SmartSectionItemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:gravity="center"
+        android:textSize="@dimen/subtitle_2"
         tools:text="Favorites"/>
 </LinearLayout>

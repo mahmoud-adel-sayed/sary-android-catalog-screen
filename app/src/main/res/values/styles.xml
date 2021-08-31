@@ -19,19 +19,4 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/h6</item>
     </style>
-
-    <style name="SmartSectionItemImage">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
-    </style>
-
-    <style name="SmartSectionItemTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">@dimen/margin_small</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">@dimen/subtitle_2</item>
-    </style>
 </resources>

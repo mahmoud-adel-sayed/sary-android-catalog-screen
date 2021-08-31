@@ -11,10 +11,10 @@
         style="@style/SectionTitle"
         tools:text="By Category" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/catalog_section"
+    <LinearLayout
+        android:id="@+id/section_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/activity_vertical_margin"
-        android:overScrollMode="never"/>
+        android:padding="12dp"
+        android:orientation="vertical"/>
 </LinearLayout>
