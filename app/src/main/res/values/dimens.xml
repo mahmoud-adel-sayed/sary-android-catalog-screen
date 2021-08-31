@@ -8,8 +8,6 @@
     <dimen name="banner_height">172dp</dimen>
     <dimen name="banner_corner_radius">38dp</dimen>
     <dimen name="banner_progress_size">50dp</dimen>
-    <dimen name="group_section_item_height">130dp</dimen>
-    <dimen name="banner_section_item_height">120dp</dimen>
 
     <dimen name="h6">20sp</dimen>
     <dimen name="subtitle_1">16sp</dimen>
