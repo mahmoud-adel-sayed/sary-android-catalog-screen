@@ -5,14 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sary.task.store.ui.StoreFragment
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
-
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +43,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     ) {
         supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment, tag).commit()
     }
-
-    override fun supportFragmentInjector() = dispatchingAndroidInjector
 }
 
 /**
  * A simple empty [Fragment].
  */
+@AndroidEntryPoint
 class EmptyFragment : Fragment()
 
 private const val TAG_STORE_FRAGMENT = "storeFragment"

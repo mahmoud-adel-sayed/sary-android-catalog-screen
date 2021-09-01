@@ -1,4 +1,4 @@
-package com.sary.task.di
+package com.sary.task
 
 import android.app.Application
 import androidx.core.os.ConfigurationCompat
@@ -6,6 +6,8 @@ import com.sary.task.store.data.service.StoreService
 import com.sary.task.util.LiveDataCallAdapterFactory
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,7 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class AppModule {
+@InstallIn(SingletonComponent::class)
+object AppModule {
     @Singleton
     @Provides
     fun provideRetrofit(app: Application): Retrofit {

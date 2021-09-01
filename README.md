@@ -9,7 +9,6 @@ The implementation is written in __Kotlin__. The app uses two APIs [Banner API](
 
 ### Upcoming Optimizations & Integrations
 * Replace ButterKnife library with ViewBinding.
-* Integrate Hilt.
 * Create equivalent UI with Jetpack Compose in a different branch.
 
 ### APK & Video Links

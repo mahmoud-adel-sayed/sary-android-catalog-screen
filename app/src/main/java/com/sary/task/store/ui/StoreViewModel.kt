@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.sary.task.store.data.StoreRepository
 import com.sary.task.util.Response
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class StoreViewModel @Inject constructor(
     private val repository: StoreRepository
 ) : ViewModel() {

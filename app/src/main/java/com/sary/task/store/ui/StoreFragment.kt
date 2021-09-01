@@ -13,7 +13,6 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.bumptech.glide.request.RequestOptions
@@ -22,7 +21,6 @@ import com.sary.task.banner.BannerView
 import com.sary.task.banner.ImageLoadingListener
 import com.sary.task.banner.Slide
 import com.sary.task.banner.SlideView
-import com.sary.task.di.Injectable
 import com.sary.task.store.data.model.BannerItem
 import com.sary.task.store.data.model.CatalogSection
 import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_BANNER
@@ -30,13 +28,11 @@ import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_GROUP
 import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_SMART
 import com.sary.task.store.data.model.SectionItem
 import com.sary.task.util.Response
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @SuppressLint("NonConstantResourceId", "InflateParams")
-class StoreFragment : Fragment(), Injectable {
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+class StoreFragment : Fragment() {
 
     @BindView(R.id.root)
     lateinit var root: ViewGroup
@@ -47,7 +43,7 @@ class StoreFragment : Fragment(), Injectable {
     @BindView(R.id.catalog_sections)
     lateinit var catalogSectionsContainer: LinearLayout
 
-    private val viewModel by viewModels<StoreViewModel> { viewModelFactory }
+    private val viewModel by viewModels<StoreViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
