@@ -1,6 +1,5 @@
 package com.sary.task.store.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -9,18 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bumptech.glide.request.RequestOptions
 import com.sary.task.*
-import com.sary.task.banner.BannerView
 import com.sary.task.banner.ImageLoadingListener
 import com.sary.task.banner.Slide
 import com.sary.task.banner.SlideView
+import com.sary.task.databinding.BannerSlideBinding
+import com.sary.task.databinding.CatalogSectionBinding
+import com.sary.task.databinding.FragmentStoreBinding
+import com.sary.task.databinding.SmartSectionItemBinding
 import com.sary.task.store.data.model.BannerItem
 import com.sary.task.store.data.model.CatalogSection
 import com.sary.task.store.data.model.CatalogSection.Companion.DATA_TYPE_BANNER
@@ -31,17 +34,9 @@ import com.sary.task.util.Response
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-@SuppressLint("NonConstantResourceId", "InflateParams")
 class StoreFragment : Fragment() {
-
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-
-    @BindView(R.id.banner)
-    lateinit var bannerView: BannerView
-
-    @BindView(R.id.catalog_sections)
-    lateinit var catalogSectionsContainer: LinearLayout
+    private var _binding: FragmentStoreBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel by viewModels<StoreViewModel>()
 
@@ -49,16 +44,20 @@ class StoreFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_store, container, false)
-        ButterKnife.bind(this, view)
+    ): View {
+        _binding = FragmentStoreBinding.inflate(inflater, container, false)
         observeData()
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.getBannerItems()
         viewModel.getCatalog()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun observeData() {
@@ -68,7 +67,7 @@ class StoreFragment : Fragment() {
                 is Response.Error -> {
                     // TODO: Find a better way to show errors.
                     it.message?.let { message ->
-                        root.showSnackBar(
+                        binding.root.showSnackBar(
                             message = "Error Showing Banners: $message",
                             actionLabel = getString(R.string.retry),
                             action = { viewModel.getBannerItems() }
@@ -85,7 +84,7 @@ class StoreFragment : Fragment() {
                 is Response.Error -> {
                     // TODO: Find a better way to show errors.
                     it.message?.let { message ->
-                        root.showSnackBar(
+                        binding.root.showSnackBar(
                             message = "Error Showing Catalog: $message",
                             actionLabel = getString(R.string.retry),
                             action = { viewModel.getCatalog() }
@@ -105,7 +104,7 @@ class StoreFragment : Fragment() {
                 onClick = { Toast.makeText(context, banner[i].link, Toast.LENGTH_SHORT).show() }
             )
         }
-        bannerView.setSlides(
+        binding.banner.setSlides(
             slides = slides,
             onSlideView = { inflater, viewGroup -> BannerItemView(context, inflater, viewGroup) }
         )
@@ -113,19 +112,18 @@ class StoreFragment : Fragment() {
 
     private fun constructCatalog(sections: List<CatalogSection>) {
         sections.forEach { section ->
-            val container = layoutInflater.inflate(R.layout.catalog_section, null)
-            val title = container.findViewById<TextView>(R.id.title)
+            val sectionBinding = CatalogSectionBinding.inflate(layoutInflater)
             if (section.showTitle) {
-                title.text = section.title
+                sectionBinding.title.text = section.title
             } else {
-                title.visibility = View.GONE
+                sectionBinding.title.visibility = View.GONE
             }
             if (section.dataType == DATA_TYPE_SMART) {
-                container.setBackgroundColor(Color.parseColor("#EEEEEE"))
+                sectionBinding.root.setBackgroundColor(Color.parseColor("#EEEEEE"))
             }
-            val column = container.findViewById<LinearLayout>(R.id.section_items)
+            val column = sectionBinding.sectionItems
             section addTo column
-            catalogSectionsContainer.addView(container)
+            binding.catalogSections.addView(sectionBinding.root)
         }
     }
 
@@ -134,15 +132,15 @@ class StoreFragment : Fragment() {
         when (uiType) {
             CatalogSection.UI_TYPE_GRID -> {
                 val edgePadding = (12 * 2)
-                val itemSize = (getScreenSizeInPixels() - edgePadding.toPx.toInt()) / rowCount
+                val itemSize = (getScreenSizeInPixels() - edgePadding.toPx.toInt()) / rowItemsCount
 
-                val rowsCount = (data.size + rowCount - 1) / rowCount
+                val rowsCount = (data.size + rowItemsCount - 1) / rowItemsCount
                 for (i in 0 until rowsCount) {
                     val row = LinearLayout(requireContext()).also {
                         it.orientation = LinearLayout.HORIZONTAL
                     }
-                    for (j in 0 until rowCount) {
-                        val index = i * rowCount + j
+                    for (j in 0 until rowItemsCount) {
+                        val index = i * rowItemsCount + j
                         if (index >= data.size) {
                             break
                         }
@@ -173,35 +171,33 @@ class StoreFragment : Fragment() {
     private fun createSectionItem(size: Int, dataType: String, item: SectionItem): View? {
         return when (dataType) {
             DATA_TYPE_SMART -> {
-                layoutInflater.inflate(R.layout.smart_section_item, null).apply {
-                    layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
-                    findViewById<ImageView>(R.id.image).loadImage(
-                        context = requireContext(),
-                        requestOptions = RequestOptions.overrideOf(75),
-                        imageUrl = item.imageUrl
-                    )
-                    findViewById<TextView>(R.id.title).text = item.name
-                }
+                val itemBinding = SmartSectionItemBinding.inflate(layoutInflater)
+                itemBinding.root.layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                itemBinding.image.loadImage(
+                    context = requireContext(),
+                    requestOptions = RequestOptions.overrideOf(75),
+                    imageUrl = item.imageUrl
+                )
+                itemBinding.title.text = item.name
+                itemBinding.root
             }
-            DATA_TYPE_GROUP -> {
-                layoutInflater.inflate(R.layout.group_section_item, null).apply {
-                    layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
-                    findViewById<ImageView>(R.id.image).loadImage(
-                        context = requireContext(),
-                        requestOptions = RequestOptions.overrideOf(size),
-                        imageUrl = item.imageUrl
-                    )
-                }
+            DATA_TYPE_GROUP -> ImageView(context).apply {
+                layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                setPadding(4.toPx.toInt())
+                loadImage(
+                    context = requireContext(),
+                    requestOptions = RequestOptions.overrideOf(size),
+                    imageUrl = item.imageUrl
+                )
             }
-            DATA_TYPE_BANNER -> {
-                layoutInflater.inflate(R.layout.banner_section_item, null).apply {
-                    layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
-                    findViewById<ImageView>(R.id.image).loadImage(
-                        context = requireContext(),
-                        requestOptions = RequestOptions.overrideOf(size),
-                        imageUrl = item.imageUrl
-                    )
-                }
+            DATA_TYPE_BANNER -> ImageView(context).apply {
+                layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                setPadding(4.toPx.toInt())
+                loadImage(
+                    context = requireContext(),
+                    requestOptions = RequestOptions.overrideOf(size),
+                    imageUrl = item.imageUrl
+                )
             }
             else -> null
         }
@@ -213,18 +209,16 @@ private class BannerItemView(
     layoutInflater: LayoutInflater,
     container: ViewGroup?
 ) : SlideView() {
-    private val _view = layoutInflater.inflate(R.layout.banner_slide, container, false)
-    private val imageView = _view.findViewById<ImageView>(R.id.slide_image)
-    private val progress = _view.findViewById<ProgressBar>(R.id.progress)
+    private val binding = BannerSlideBinding.inflate(layoutInflater, container, false)
 
-    override val view: View get() = _view
+    override val view: View get() = binding.root
 
     override fun bind(position: Int, slide: Slide) {
-        view.setOnClickListener { slide.onClick() }
-        imageView.loadImage(
+        binding.root.setOnClickListener { slide.onClick() }
+        binding.slideImage.loadImage(
             context = context,
             imageUrl = slide.imageUrl,
-            listener = ImageLoadingListener(progress)
+            listener = ImageLoadingListener(binding.progress)
         )
     }
 }

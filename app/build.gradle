@@ -3,7 +3,6 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'com.jakewharton.butterknife'
 }
 
 android {
@@ -36,6 +35,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -62,10 +65,6 @@ dependencies {
     // Glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
-
-    // ButterKnife
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
 
     // Testing Dependencies
     testImplementation 'junit:junit:4.+'

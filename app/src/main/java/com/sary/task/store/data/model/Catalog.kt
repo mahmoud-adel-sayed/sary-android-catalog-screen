@@ -25,7 +25,7 @@ data class CatalogSection(
     val uiType: String,
 
     @field:SerializedName("row_count")
-    val rowCount: Int
+    val rowItemsCount: Int
 ) {
     companion object {
         const val DATA_TYPE_SMART = "smart"

@@ -3,7 +3,7 @@ package com.sary.task
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.sary.task.databinding.MainActivityBinding
 import com.sary.task.store.ui.StoreFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -12,7 +12,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = MainActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // We could use the navigation component (Jetpack library) to simplify
         // management of fragments & the app navigation
@@ -26,8 +27,7 @@ class MainActivity : AppCompatActivity() {
         val ordersFragment = EmptyFragment()
         val myPageFragment = EmptyFragment()
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.setOnNavigationItemSelectedListener {
+        binding.bottomNavigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.store -> replaceFragment(storeFragment)
                 R.id.orders -> replaceFragment(ordersFragment)
