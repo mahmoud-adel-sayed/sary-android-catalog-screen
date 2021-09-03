@@ -11,7 +11,7 @@ The implementation is written in __Kotlin__. The app uses two APIs [Banner API](
 * Create equivalent UI with Jetpack Compose in a different branch.
 
 ### APK & Video Links
-1. APK link: <https://drive.google.com/file/d/1ESzi3oclEa1VBnqj-k9ONPBpi_0Rlzac/view?usp=sharing>.
+1. APK link: <https://drive.google.com/file/d/1COZCd_stTzvzXNcL2m_EZInpJ1UUdcYU/view?usp=sharing>.
 2. Video link: <https://drive.google.com/file/d/16U9SsZOCdQvnDgQQpCpr0LeDTIUr8jnp/view?usp=sharing>.
 
 ### Architecture
@@ -19,6 +19,7 @@ This sample app uses MVVM Architecture, a well known architecture for Android, t
 
 ### Libraries Used
 * ViewModel & Livedata.
+* ViewBinding.
 * Hilt for dependency injection.
 * [Retrofit][retrofit] for REST api communication.
 * [Gson][gson] for parsing JSON.
