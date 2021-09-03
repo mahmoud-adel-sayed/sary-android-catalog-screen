@@ -132,7 +132,7 @@ class StoreFragment : Fragment() {
         when (uiType) {
             CatalogSection.UI_TYPE_GRID -> {
                 val edgePadding = (12 * 2)
-                val itemSize = (getScreenSizeInPixels() - edgePadding.toPx.toInt()) / rowItemsCount
+                val itemSize = (getScreenWidthInPixels() - edgePadding.toPx.toInt()) / rowItemsCount
 
                 val rowsCount = (data.size + rowItemsCount - 1) / rowItemsCount
                 for (i in 0 until rowsCount) {
@@ -155,7 +155,7 @@ class StoreFragment : Fragment() {
             }
             CatalogSection.UI_TYPE_LINEAR -> {
                 column.gravity = Gravity.CENTER_HORIZONTAL
-                val itemSize = getScreenSizeInPixels() / 2
+                val itemSize = getScreenWidthInPixels() / 2
                 data.forEach { item ->
                     column.addView(
                         createSectionItem(size = itemSize, dataType = this.dataType, item = item)

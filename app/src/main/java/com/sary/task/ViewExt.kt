@@ -55,7 +55,7 @@ fun View.showSnackBar(
 }
 
 @Suppress("DEPRECATION")
-fun Fragment.getScreenSizeInPixels(): Int {
+fun Fragment.getScreenWidthInPixels(): Int {
     val display = requireActivity().windowManager.defaultDisplay
     val size = Point()
     display.getSize(size)
