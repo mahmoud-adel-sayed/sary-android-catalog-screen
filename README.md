@@ -11,7 +11,7 @@ The implementation is written in __Kotlin__. The app uses two APIs [Banner API](
 * Create equivalent UI with Jetpack Compose in a different branch.
 
 ### APK & Video Links
-1. APK link: <https://drive.google.com/file/d/1980Y4U8Ux4AXkVIdWgf4Z_FYw7TD1o8m/view?usp=sharing>.
+1. APK link: <https://drive.google.com/file/d/1cpIR_lj8yxCXKKwA4CSBTVTso4UKMesU/view?usp=sharing>.
 2. Video link: <https://drive.google.com/file/d/16U9SsZOCdQvnDgQQpCpr0LeDTIUr8jnp/view?usp=sharing>.
 
 ### Architecture
