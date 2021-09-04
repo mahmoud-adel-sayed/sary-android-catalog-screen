@@ -6,6 +6,7 @@
     tools:parentTag="android.widget.RelativeLayout"
     tools:viewBindingIgnore="true">
 
+    <!-- Pages -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
@@ -46,4 +47,39 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:gravity="center"
         android:orientation="horizontal" />
+
+    <!-- Error Container -->
+    <LinearLayout
+        android:id="@+id/error_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/label_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="No Internet Connection"/>
+
+        <TextView
+            android:id="@+id/btn_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:textAllCaps="true"
+            android:textSize="@dimen/button"
+            android:textColor="?colorSecondary"
+            android:text="@string/retry"/>
+    </LinearLayout>
+
+    <!-- Empty State Container -->
+    <FrameLayout
+        android:id="@+id/empty_state_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 </merge>

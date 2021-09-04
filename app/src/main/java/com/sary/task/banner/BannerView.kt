@@ -29,6 +29,11 @@ class BannerView @JvmOverloads constructor(
     private val bulletsIndicator: LinearLayout
     private val viewPager: ViewPager2
 
+    private val errorContainer: ViewGroup
+    private val errorLabel: TextView
+    private val retryBTN: View
+    private val emptyStateContainer: ViewGroup
+
     private var slides: List<Slide> = emptyList()
     private var bullets: Array<TextView>? = null
 
@@ -55,6 +60,11 @@ class BannerView @JvmOverloads constructor(
         }
         bulletsIndicator = view.findViewById(R.id.bullets_indicator)
         viewPager = view.findViewById(R.id.view_pager)
+
+        errorContainer = view.findViewById(R.id.error_container)
+        errorLabel = view.findViewById(R.id.label_error)
+        retryBTN = view.findViewById(R.id.btn_retry)
+        emptyStateContainer = view.findViewById(R.id.empty_state_container)
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BannerView)
         try {
@@ -100,6 +110,31 @@ class BannerView @JvmOverloads constructor(
 
     fun setListener(listener: Listener?) {
         this.listener = listener
+    }
+
+    fun setError(message: String?, onRetryClick: () -> Unit) {
+        errorContainer.visibility = View.VISIBLE
+        errorLabel.text = message
+        retryBTN.setOnClickListener {
+            errorContainer.visibility = View.GONE
+            onRetryClick()
+        }
+        invalidate()
+        requestLayout()
+    }
+
+    fun showEmptyState(view: View? = null) {
+        emptyStateContainer.visibility = View.VISIBLE
+        emptyStateContainer.addView(view)
+        invalidate()
+        requestLayout()
+    }
+
+    fun removeEmptyState() {
+        emptyStateContainer.removeAllViews()
+        emptyStateContainer.visibility = View.GONE
+        invalidate()
+        requestLayout()
     }
 
     var showArrows: Boolean

@@ -37,10 +37,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun replaceFragment(
-        fragment: Fragment,
-        tag: String? = null
-    ) {
+    private fun replaceFragment(fragment: Fragment, tag: String? = null) {
         supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment, tag).commit()
     }
 }

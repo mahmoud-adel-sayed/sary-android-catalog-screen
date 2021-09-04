@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Margins & Paddings -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_extra_small">4dp</dimen>
 
+    <!-- Banner -->
     <dimen name="banner_height">172dp</dimen>
     <dimen name="banner_corner_radius">38dp</dimen>
     <dimen name="banner_progress_size">50dp</dimen>
 
+    <!-- Typography -->
     <dimen name="h6">20sp</dimen>
     <dimen name="subtitle_1">16sp</dimen>
     <dimen name="subtitle_2">14sp</dimen>
+    <dimen name="button">16sp</dimen>
 </resources>

@@ -65,16 +65,17 @@ class StoreFragment : Fragment() {
             when (it) {
                 is Response.Success -> setupBanner(it.data.result)
                 is Response.Error -> {
-                    // TODO: Find a better way to show errors.
-                    it.message?.let { message ->
-                        binding.root.showSnackBar(
-                            message = "Error Showing Banners: $message",
-                            actionLabel = getString(R.string.retry),
-                            action = { viewModel.getBannerItems() }
-                        )
-                    }
+                    binding.banner.setError(
+                        message = it.message,
+                        onRetryClick = { viewModel.getBannerItems() }
+                    )
                 }
-                is Response.Empty -> TODO()
+                is Response.Empty -> {
+                    // We could create an empty state view that has an image and a tagline,
+                    // but for now we show nothing.
+                    val emptyStateView: View? = null
+                    binding.banner.showEmptyState(view = emptyStateView)
+                }
             }
         })
 
@@ -82,7 +83,6 @@ class StoreFragment : Fragment() {
             when (it) {
                 is Response.Success -> constructCatalog(it.data.result)
                 is Response.Error -> {
-                    // TODO: Find a better way to show errors.
                     it.message?.let { message ->
                         binding.root.showSnackBar(
                             message = "Error Showing Catalog: $message",
@@ -91,7 +91,7 @@ class StoreFragment : Fragment() {
                         )
                     }
                 }
-                is Response.Empty -> TODO()
+                is Response.Empty -> handleEmptyCatalog()
             }
         })
     }
@@ -112,14 +112,15 @@ class StoreFragment : Fragment() {
 
     private fun constructCatalog(sections: List<CatalogSection>) {
         sections.forEach { section ->
-            val sectionBinding = CatalogSectionBinding.inflate(layoutInflater)
-            if (section.showTitle) {
-                sectionBinding.title.text = section.title
-            } else {
-                sectionBinding.title.visibility = View.GONE
-            }
-            if (section.dataType == DATA_TYPE_SMART) {
-                sectionBinding.root.setBackgroundColor(Color.parseColor("#EEEEEE"))
+            val sectionBinding = CatalogSectionBinding.inflate(layoutInflater).apply {
+                if (section.showTitle) {
+                    title.text = section.title
+                } else {
+                    title.visibility = View.GONE
+                }
+                if (section.dataType == DATA_TYPE_SMART) {
+                    root.setBackgroundColor(Color.parseColor("#EEEEEE"))
+                }
             }
             val column = sectionBinding.sectionItems
             section addTo column
@@ -170,17 +171,15 @@ class StoreFragment : Fragment() {
 
     private fun createSectionItem(size: Int, dataType: String, item: SectionItem): View? {
         return when (dataType) {
-            DATA_TYPE_SMART -> {
-                val itemBinding = SmartSectionItemBinding.inflate(layoutInflater)
-                itemBinding.root.layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
-                itemBinding.image.loadImage(
+            DATA_TYPE_SMART -> SmartSectionItemBinding.inflate(layoutInflater).apply {
+                root.layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
+                image.loadImage(
                     context = requireContext(),
                     requestOptions = RequestOptions.overrideOf(75),
                     imageUrl = item.imageUrl
                 )
-                itemBinding.title.text = item.name
-                itemBinding.root
-            }
+                title.text = item.name
+            }.root
             DATA_TYPE_GROUP -> ImageView(context).apply {
                 layoutParams = LayoutParams(size, LayoutParams.WRAP_CONTENT)
                 setPadding(4.toPx.toInt())
@@ -202,6 +201,11 @@ class StoreFragment : Fragment() {
             else -> null
         }
     }
+
+    private fun handleEmptyCatalog() {
+        // Show empty state for the catalog,
+        // but for now we do nothing.
+    }
 }
 
 private class BannerItemView(
@@ -213,12 +217,10 @@ private class BannerItemView(
 
     override val view: View get() = binding.root
 
-    override fun bind(position: Int, slide: Slide) {
-        binding.root.setOnClickListener { slide.onClick() }
-        binding.slideImage.loadImage(
-            context = context,
-            imageUrl = slide.imageUrl,
-            listener = ImageLoadingListener(binding.progress)
+    override fun bind(position: Int, slide: Slide) = with(binding) {
+        root.setOnClickListener { slide.onClick() }
+        slideImage.loadImage(
+            context = context, imageUrl = slide.imageUrl, listener = ImageLoadingListener(progress)
         )
     }
 }

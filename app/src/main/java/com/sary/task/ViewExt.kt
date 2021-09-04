@@ -43,7 +43,7 @@ fun View.showSnackBar(
     message: String,
     @Duration duration: Int = Snackbar.LENGTH_INDEFINITE,
     actionLabel: String? = null,
-    action: ((v: View) -> Unit)? = null
+    action: ((View) -> Unit)? = null
 ) {
     val snackBar = Snackbar.make(this, message, duration)
     if (actionLabel != null && action != null) {
