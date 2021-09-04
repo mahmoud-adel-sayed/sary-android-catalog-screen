@@ -118,6 +118,8 @@ class BannerView @JvmOverloads constructor(
         retryBTN.setOnClickListener {
             errorContainer.visibility = View.GONE
             onRetryClick()
+            invalidate()
+            requestLayout()
         }
         invalidate()
         requestLayout()
