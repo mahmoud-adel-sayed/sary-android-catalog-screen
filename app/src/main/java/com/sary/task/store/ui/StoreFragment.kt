@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
+import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -130,9 +131,9 @@ class StoreFragment : Fragment() {
 
     private infix fun CatalogSection.addTo(column: LinearLayout) {
         column.orientation = LinearLayout.VERTICAL
+        val edgePadding = (12 * 2)
         when (uiType) {
             CatalogSection.UI_TYPE_GRID -> {
-                val edgePadding = (12 * 2)
                 val itemSize = (getScreenWidthInPixels() - edgePadding.toPx.toInt()) / rowItemsCount
 
                 val rowsCount = (data.size + rowItemsCount - 1) / rowItemsCount
@@ -164,7 +165,22 @@ class StoreFragment : Fragment() {
                 }
             }
             CatalogSection.UI_TYPE_SLIDER -> {
-                TODO("Implement it later")
+                val horizontalScrollView = HorizontalScrollView(requireContext()).run {
+                    layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+                    val row = LinearLayout(requireContext()).also {
+                        it.orientation = LinearLayout.HORIZONTAL
+                    }
+                    // Show fixed number of items (3 items and then content will be scrollable)
+                    val itemSize = (getScreenWidthInPixels() - edgePadding.toPx.toInt()) / 3
+                    data.forEach { item ->
+                        row.addView(
+                            createSectionItem(size = itemSize, dataType = dataType, item = item)
+                        )
+                    }
+                    addView(row)
+                    this
+                }
+                column.addView(horizontalScrollView)
             }
         }
     }
