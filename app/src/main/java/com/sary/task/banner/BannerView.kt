@@ -108,10 +108,17 @@ class BannerView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Registers the [listener] to notify clients about changes.
+     */
     fun setListener(listener: Listener?) {
         this.listener = listener
     }
 
+    /**
+     * Shows the specified error [message] and a retry button, when the button is clicked
+     * the [onRetryClick] function will be called.
+     */
     fun setError(message: String?, onRetryClick: () -> Unit) {
         errorContainer.visibility = View.VISIBLE
         errorLabel.text = message
@@ -125,6 +132,9 @@ class BannerView @JvmOverloads constructor(
         requestLayout()
     }
 
+    /**
+     * Shows the specified [view] as an empty state if the value is not null.
+     */
     fun showEmptyState(view: View? = null) {
         if (view == null) {
             return
@@ -135,6 +145,9 @@ class BannerView @JvmOverloads constructor(
         requestLayout()
     }
 
+    /**
+     * Removes any added empty state.
+     */
     fun removeEmptyState() {
         emptyStateContainer.removeAllViews()
         emptyStateContainer.visibility = View.GONE
@@ -142,6 +155,9 @@ class BannerView @JvmOverloads constructor(
         requestLayout()
     }
 
+    /**
+     * The flag indicating whether arrows are shown or not.
+     */
     var showArrows: Boolean
         get() = properties.showArrows
         set(value) {
@@ -151,6 +167,9 @@ class BannerView @JvmOverloads constructor(
             requestLayout()
         }
 
+    /**
+     * The flag indicating whether bullets are shown or not.
+     */
     var showBullets: Boolean
         get() = properties.showBullets
         set(value) {
@@ -160,6 +179,9 @@ class BannerView @JvmOverloads constructor(
             requestLayout()
         }
 
+    /**
+     * The flag indicating whether autoScrolling is enabled or not.
+     */
     var isAutoScrollEnabled: Boolean
         get() = properties.autoScrollEnabled
         set(value) {
@@ -169,6 +191,9 @@ class BannerView @JvmOverloads constructor(
             requestLayout()
         }
 
+    /**
+     * The wait time before scrolling to a new slide (in milliseconds).
+     */
     var slideShowDuration: Long
         get() = properties.slideShowDuration
         set(value) {
@@ -178,6 +203,9 @@ class BannerView @JvmOverloads constructor(
             requestLayout()
         }
 
+    /**
+     * The color of the active bullet.
+     */
     var activeBulletColor: Int
         @ColorInt
         get() = properties.activeBulletColor
@@ -188,6 +216,9 @@ class BannerView @JvmOverloads constructor(
             requestLayout()
         }
 
+    /**
+     * The color of the inactive bullet.
+     */
     var inactiveBulletColor: Int
         @ColorInt
         get() = properties.inactiveBulletColor
@@ -198,6 +229,10 @@ class BannerView @JvmOverloads constructor(
             requestLayout()
         }
 
+    /**
+     * Renders the specified [slides] and calls [onSlideView] function to get the view
+     * for each slide.
+     */
     fun setSlides(
         slides: List<Slide>,
         onSlideView: (LayoutInflater, ViewGroup?) -> SlideView
