@@ -126,6 +126,9 @@ class BannerView @JvmOverloads constructor(
     }
 
     fun showEmptyState(view: View? = null) {
+        if (view == null) {
+            return
+        }
         emptyStateContainer.visibility = View.VISIBLE
         emptyStateContainer.addView(view)
         invalidate()
@@ -199,6 +202,11 @@ class BannerView @JvmOverloads constructor(
         slides: List<Slide>,
         onSlideView: (LayoutInflater, ViewGroup?) -> SlideView
     ) {
+        if (slides.isEmpty()) {
+            showArrows(show = false)
+            showEmptyState()
+            return
+        }
         if (slides.size == 1) {
             showArrows(show = false)
         }
