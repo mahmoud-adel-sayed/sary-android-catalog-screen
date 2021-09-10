@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="banner_height">250dp</dimen>
-    <dimen name="banner_corner_radius">50dp</dimen>
-</resources>

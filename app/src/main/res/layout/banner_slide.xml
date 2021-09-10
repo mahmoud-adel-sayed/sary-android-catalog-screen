@@ -14,5 +14,7 @@
 
     <ProgressBar
         android:id="@+id/progress"
-        style="@style/Progress"/>
+        android:layout_width="@dimen/banner_progress_size"
+        android:layout_height="@dimen/banner_progress_size"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

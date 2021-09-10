@@ -1,8 +1,15 @@
+import com.sary.task.buildsrc.Libs
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+}
+
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
 }
 
 android {
@@ -11,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "com.sary.task"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -28,46 +35,65 @@ android {
     }
 
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
+    implementation Libs.Kotlin.stdlib
+    implementation Libs.Coroutines.android
 
-    // Arch Lifecycle
-    implementation "androidx.lifecycle:lifecycle-runtime:$archVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$archVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archVersion"
-    kapt "androidx.lifecycle:lifecycle-compiler:$archVersion"
+    implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.viewPager2
 
-    // Retrofit & okhttp
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    implementation Libs.AndroidX.Activity.activityCompose
+    implementation Libs.AndroidX.ConstraintLayout.constraintLayoutCompose
 
-    // Hilt
-    implementation "com.google.dagger:hilt-android:$hiltVersion"
-    kapt "com.google.dagger:hilt-compiler:$hiltVersion"
+    implementation Libs.AndroidX.Navigation.navigationCompose
+    implementation Libs.AndroidX.Navigation.hiltNavigationCompose
 
-    // Glide
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
-    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation Libs.AndroidX.Compose.runtime
+    implementation Libs.AndroidX.Compose.runtimeLivedata
+    implementation Libs.AndroidX.Compose.foundation
+    implementation Libs.AndroidX.Compose.layout
+    implementation Libs.AndroidX.Compose.ui
+    implementation Libs.AndroidX.Compose.uiUtil
+    implementation Libs.AndroidX.Compose.animation
+    implementation Libs.AndroidX.Compose.material
+    implementation Libs.AndroidX.Compose.materialIconsExtended
+    implementation Libs.AndroidX.Compose.tooling
 
-    // Testing Dependencies
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation Libs.AndroidX.Lifecycle.viewModel
+    implementation Libs.AndroidX.Lifecycle.viewModelCompose
+    implementation Libs.AndroidX.Lifecycle.livedata
+
+    implementation Libs.Accompanist.coil
+    implementation Libs.Accompanist.insets
+
+    implementation Libs.Retrofit.retrofit
+    implementation Libs.Retrofit.gson
+    implementation Libs.OkHttp.okhttp
+    implementation Libs.OkHttp.logging
+
+    implementation Libs.Glide.glide
+    kapt Libs.Glide.compiler
+
+    implementation Libs.Hilt.hilt
+    kapt Libs.Hilt.compiler
+
+    coreLibraryDesugaring Libs.jdkDesugar
 }

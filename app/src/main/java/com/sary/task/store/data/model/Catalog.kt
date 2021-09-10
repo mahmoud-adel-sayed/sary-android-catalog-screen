@@ -1,7 +1,9 @@
 package com.sary.task.store.data.model
 
+import androidx.compose.runtime.Immutable
 import com.google.gson.annotations.SerializedName
 
+@Immutable
 data class CatalogSection(
     @field:SerializedName("id")
     val id: Long,
@@ -38,6 +40,7 @@ data class CatalogSection(
     }
 }
 
+@Immutable
 data class SectionItem(
     @field:SerializedName("name")
     val name: String?,

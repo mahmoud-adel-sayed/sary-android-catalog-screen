@@ -72,7 +72,6 @@
             android:layout_marginStart="@dimen/margin_small"
             android:textAllCaps="true"
             android:textSize="@dimen/button"
-            android:textColor="?colorSecondary"
             android:text="@string/retry"/>
     </LinearLayout>
 
