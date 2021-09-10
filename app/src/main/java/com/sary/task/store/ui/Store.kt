@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -231,42 +230,37 @@ private fun GridCatalogSection(section: CatalogSection) {
 
 @Composable
 private fun LinearCatalogSection(section: CatalogSection) {
-    BoxWithConstraints {
-        val itemWidth = (constraints.maxWidth / 2).dp
-        Column(
-            modifier = Modifier.padding(horizontal = EDGE_PADDING / 2),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            section.data.forEach { item ->
-                SectionItem(
-                    modifier = Modifier
-                        .size(width = itemWidth, height = Dp.Unspecified)
-                        .padding(4.dp),
-                    item = item,
-                    dataType = section.dataType
-                )
-            }
+    Column(
+        modifier = Modifier
+            .padding(horizontal = EDGE_PADDING / 2)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        section.data.forEach { item ->
+            SectionItem(
+                modifier = Modifier
+                    .size(width = 170.dp, height = Dp.Unspecified)
+                    .padding(4.dp),
+                item = item,
+                dataType = section.dataType
+            )
         }
     }
 }
 
 @Composable
 private fun SliderCatalogSection(section: CatalogSection) {
-    BoxWithConstraints {
-        val edgePadding = with(LocalDensity.current) { EDGE_PADDING.toPx() }
-        val itemWidth = ((constraints.maxWidth - edgePadding) / 3).dp
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = EDGE_PADDING / 2)
-        ) {
-            items(section.data) { item ->
-                SectionItem(
-                    modifier = Modifier
-                        .size(width = itemWidth, height = Dp.Unspecified)
-                        .padding(4.dp),
-                    item = item,
-                    dataType = section.dataType
-                )
-            }
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = EDGE_PADDING / 2)
+    ) {
+        items(section.data) { item ->
+            SectionItem(
+                modifier = Modifier
+                    .size(width = 150.dp, height = Dp.Unspecified)
+                    .padding(4.dp),
+                item = item,
+                dataType = section.dataType
+            )
         }
     }
 }
@@ -307,7 +301,7 @@ private fun SmartSectionItem(
                 url = item.imageUrl,
                 contentDescription = null,
                 modifier = modifier
-                    .size(75.dp)
+                    .size(64.dp)
                     .padding(16.dp)
             )
         }
