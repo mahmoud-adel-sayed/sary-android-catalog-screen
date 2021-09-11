@@ -12,7 +12,7 @@ data class CatalogSection(
     val title: String,
 
     @field:SerializedName("subtitle")
-    val subtitle: String,
+    val subtitle: String = "",
 
     @field:SerializedName("data")
     val data: List<SectionItem>,
@@ -43,14 +43,14 @@ data class CatalogSection(
 @Immutable
 data class SectionItem(
     @field:SerializedName("name")
-    val name: String?,
+    val name: String? = null,
 
     @field:SerializedName("image")
     val imageUrl: String,
 
     @field:SerializedName("cover")
-    val coverUrl: String?,
+    val coverUrl: String? = null,
 
     @field:SerializedName("deep_link")
-    val deepLink: String?
+    val deepLink: String? = null
 )

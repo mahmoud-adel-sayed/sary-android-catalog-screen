@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -131,7 +131,7 @@ private fun Catalog(viewModel: StoreViewModel) {
         when (it) {
             is Response.Success -> {
                 val sections = it.data.result
-                sections.forEach { section -> CatalogSection(section) }
+                sections.forEach { section -> CatalogSection(section = section) }
             }
             is Response.Error -> {
                 val snackBarActionLabel = stringResource(id = R.string.retry)
@@ -166,14 +166,17 @@ private fun Catalog(viewModel: StoreViewModel) {
 }
 
 @Composable
-private fun CatalogSection(section: CatalogSection) {
+private fun CatalogSection(
+    modifier: Modifier = Modifier,
+    section: CatalogSection
+) {
     val background = if (section.dataType == CatalogSection.DATA_TYPE_SMART) {
         AppTheme.colors.cardBackground
     } else {
         AppTheme.colors.background
     }
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         color = background
     ) {
         Column {
@@ -239,7 +242,7 @@ private fun LinearCatalogSection(section: CatalogSection) {
         section.data.forEach { item ->
             SectionItem(
                 modifier = Modifier
-                    .size(width = 170.dp, height = Dp.Unspecified)
+                    .size(width = 170.dp, height = 170.dp)
                     .padding(4.dp),
                 item = item,
                 dataType = section.dataType
@@ -256,7 +259,7 @@ private fun SliderCatalogSection(section: CatalogSection) {
         items(section.data) { item ->
             SectionItem(
                 modifier = Modifier
-                    .size(width = 150.dp, height = Dp.Unspecified)
+                    .size(width = 150.dp, height = 150.dp)
                     .padding(4.dp),
                 item = item,
                 dataType = section.dataType
@@ -407,3 +410,265 @@ private class BannerItemView(
 }
 
 private val EDGE_PADDING = 24.dp
+
+@Preview(name = "Grid - Smart Catalog Section", widthDp = 480, heightDp = 150)
+@Composable
+private fun GridSmartCatalogSectionPreview() {
+    AppTheme {
+        val section = CatalogSection(
+            id = 3,
+            title = "",
+            data = List(4) { i -> SectionItem(name = "Offers", imageUrl = "https://$i") },
+            showTitle = false,
+            dataType = CatalogSection.DATA_TYPE_SMART,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 4
+        )
+        CatalogSection(section = section)
+    }
+}
+
+@Preview(name = "Grid - Smart Catalog Section - Dark Theme", widthDp = 480, heightDp = 150)
+@Composable
+private fun GridSmartCatalogSectionPreviewDark() {
+    AppTheme(darkTheme = true) {
+        val section = CatalogSection(
+            id = 3,
+            title = "",
+            data = List(4) { i -> SectionItem(name = "Offers", imageUrl = "https://$i") },
+            showTitle = false,
+            dataType = CatalogSection.DATA_TYPE_SMART,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 4
+        )
+        CatalogSection(section = section)
+    }
+}
+
+@Preview(name = "Linear - Catalog Section", widthDp = 480, heightDp = 600)
+@Composable
+private fun LinearCatalogSectionPreview() {
+    AppTheme {
+        val section = CatalogSection(
+            id = 171,
+            title = "Partners",
+            data = List(5) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_GROUP,
+            uiType = CatalogSection.UI_TYPE_LINEAR,
+            rowItemsCount = 4
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Linear - Catalog Section - Dark Theme", widthDp = 480, heightDp = 600)
+@Composable
+private fun LinearCatalogSectionPreviewDark() {
+    AppTheme(darkTheme = true) {
+        val section = CatalogSection(
+            id = 171,
+            title = "Partners",
+            data = List(5) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_GROUP,
+            uiType = CatalogSection.UI_TYPE_LINEAR,
+            rowItemsCount = 4
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Grid - 2 Columns - Catalog Section", widthDp = 480, heightDp = 1120)
+@Composable
+private fun GridTwoColumnsCatalogSectionPreview() {
+    AppTheme {
+        val section = CatalogSection(
+            id = 147,
+            title = "Categories",
+            data = List(8) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_BANNER,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 2
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Grid - 2 Columns - Catalog Section - Dark Theme", widthDp = 480, heightDp = 1120)
+@Composable
+private fun GridTwoColumnsCatalogSectionPreviewDark() {
+    AppTheme(darkTheme = true) {
+        val section = CatalogSection(
+            id = 147,
+            title = "Categories",
+            data = List(8) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_BANNER,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 2
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Grid - 4 Columns - Catalog Section", widthDp = 480, heightDp = 420)
+@Composable
+private fun GridFourColumnsCatalogSectionPreview() {
+    AppTheme {
+        val section = CatalogSection(
+            id = 148,
+            title = "",
+            data = List(11) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = false,
+            dataType = CatalogSection.DATA_TYPE_BANNER,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 4
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Grid - 4 Columns - Catalog Section - Dark Theme", widthDp = 480, heightDp = 420)
+@Composable
+private fun GridFourColumnsCatalogSectionPreviewDark() {
+    AppTheme(darkTheme = true) {
+        val section = CatalogSection(
+            id = 148,
+            title = "",
+            data = List(11) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = false,
+            dataType = CatalogSection.DATA_TYPE_BANNER,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 4
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Grid - 3 Columns - Catalog Section", widthDp = 480, heightDp = 400)
+@Composable
+private fun GridThreeColumnsCatalogSectionPreview() {
+    AppTheme {
+        val section = CatalogSection(
+            id = 13,
+            title = "By Business Type",
+            data = List(5) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_GROUP,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 3
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Grid - 3 Columns - Catalog Section - Dark Theme", widthDp = 480, heightDp = 400)
+@Composable
+private fun GridThreeColumnsCatalogSectionPreviewDark() {
+    AppTheme(darkTheme = true) {
+        val section = CatalogSection(
+            id = 13,
+            title = "By Business Type",
+            data = List(5) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_GROUP,
+            uiType = CatalogSection.UI_TYPE_GRID,
+            rowItemsCount = 3
+        )
+        LazyColumn {
+            item { CatalogSection(section = section) }
+        }
+    }
+}
+
+@Preview(name = "Slider - Catalog Section", widthDp = 520, heightDp = 220)
+@Composable
+private fun SliderCatalogSectionPreview() {
+    AppTheme {
+        val section = CatalogSection(
+            id = 1,
+            title = "Categories",
+            data = List(10) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_GROUP,
+            uiType = CatalogSection.UI_TYPE_SLIDER,
+            rowItemsCount = 2
+        )
+        CatalogSection(section = section)
+    }
+}
+
+@Preview(name = "Slider - Catalog Section - Dark Theme", widthDp = 520, heightDp = 220)
+@Composable
+private fun SliderCatalogSectionPreviewDark() {
+    AppTheme(darkTheme = true) {
+        val section = CatalogSection(
+            id = 1,
+            title = "Categories",
+            data = List(10) { i -> SectionItem(imageUrl = "https://$i") },
+            showTitle = true,
+            dataType = CatalogSection.DATA_TYPE_GROUP,
+            uiType = CatalogSection.UI_TYPE_SLIDER,
+            rowItemsCount = 2
+        )
+        CatalogSection(section = section)
+    }
+}
+
+@Preview(name = "Smart - Section Item")
+@Composable
+private fun SmartSectionItemPreview() {
+    AppTheme {
+        SmartSectionItem(
+            item = SectionItem(name = "Favorites", imageUrl = "https://...")
+        )
+    }
+}
+
+@Preview(name = "Smart - Section Item - Dark Theme")
+@Composable
+private fun SmartSectionItemPreviewDark() {
+    AppTheme(darkTheme = true) {
+        SmartSectionItem(
+            item = SectionItem(name = "Favorites", imageUrl = "https://...")
+        )
+    }
+}
+
+@Preview(name = "Banner - Section Item")
+@Composable
+private fun BannerSectionItemPreview() {
+    AppTheme {
+        BannerSectionItem(
+            modifier = Modifier.size(100.dp),
+            item = SectionItem(imageUrl = "https://...")
+        )
+    }
+}
+
+@Preview(name = "Group - Section Item")
+@Composable
+private fun GroupSectionItemPreview() {
+    AppTheme {
+        GroupSectionItem(
+            modifier = Modifier.size(width = 120.dp, height = 60.dp),
+            item = SectionItem(imageUrl = "https://...")
+        )
+    }
+}
