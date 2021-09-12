@@ -50,6 +50,8 @@ private class LiveDataCallAdapter<R>(
             override fun onActive() {
                 super.onActive()
                 if (started.compareAndSet(false, true)) {
+                    postValue(Response.Loading)
+
                     call.enqueue(object : Callback<R> {
                         override fun onResponse(call: Call<R>, response: RetrofitResponse<R>) {
                             postValue(Response.create(response))

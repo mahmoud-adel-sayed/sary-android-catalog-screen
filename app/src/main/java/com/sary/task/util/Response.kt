@@ -6,6 +6,7 @@ import java.io.IOException
 import retrofit2.Response as RetrofitResponse
 
 sealed class Response<out D> {
+    object Loading : Response<Nothing>()
     data class Success<out T>(val data: T) : Response<T>()
     data class Error(val message: String?) : Response<Nothing>()
     class Empty<T> : Response<T>()

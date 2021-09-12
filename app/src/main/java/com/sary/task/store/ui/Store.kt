@@ -84,6 +84,9 @@ private fun Banner(viewModel: StoreViewModel) {
     val bannerView = rememberBannerView()
 
     when (val response = state.value) {
+        is Response.Loading -> {
+
+        }
         is Response.Success -> {
             AndroidView({ bannerView }) { banner ->
                 val items = response.data.result
@@ -129,6 +132,17 @@ private fun Catalog(viewModel: StoreViewModel) {
 
     viewModel.catalog.observeAsState().value?.let {
         when (it) {
+            is Response.Loading -> {
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = AppTheme.colors.secondary
+                    )
+                }
+            }
             is Response.Success -> {
                 val sections = it.data.result
                 sections.forEach { section -> CatalogSection(section = section) }
