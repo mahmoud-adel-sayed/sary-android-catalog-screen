@@ -17,26 +17,26 @@
         android:id="@+id/btn_previous"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_small"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:background="@drawable/circle_black_translucent"
-        app:srcCompat="@drawable/ic_previous"
-        android:contentDescription="@string/a11y_previous"/>
+        android:contentDescription="@string/a11y_previous"
+        android:padding="@dimen/margin_small"
+        app:srcCompat="@drawable/ic_previous" />
 
     <!-- Next Arrow -->
     <ImageView
         android:id="@+id/btn_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_small"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:background="@drawable/circle_black_translucent"
-        app:srcCompat="@drawable/ic_next"
-        android:contentDescription="@string/a11y_next"/>
+        android:contentDescription="@string/a11y_next"
+        android:padding="@dimen/margin_small"
+        app:srcCompat="@drawable/ic_next" />
 
     <!-- Bullets -->
     <LinearLayout
@@ -80,5 +80,13 @@
         android:id="@+id/empty_state_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <!-- Progress -->
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
         android:visibility="gone"/>
 </merge>

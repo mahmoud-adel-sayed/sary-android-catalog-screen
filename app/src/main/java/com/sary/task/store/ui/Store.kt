@@ -83,12 +83,12 @@ private fun Banner(viewModel: StoreViewModel) {
     val state = viewModel.bannerItems.observeAsState()
     val bannerView = rememberBannerView()
 
-    when (val response = state.value) {
-        is Response.Loading -> {
-
-        }
-        is Response.Success -> {
-            AndroidView({ bannerView }) { banner ->
+    AndroidView({ bannerView }) { banner ->
+        when (val response = state.value) {
+            is Response.Loading -> {
+                banner.showProgress()
+            }
+            is Response.Success -> {
                 val items = response.data.result
                 val slides = List(items.size) { i ->
                     Slide(
@@ -98,6 +98,8 @@ private fun Banner(viewModel: StoreViewModel) {
                         }
                     )
                 }
+
+                banner.hideProgress()
                 banner.setSlides(
                     slides = slides,
                     onSlideView = { inflater, viewGroup ->
@@ -105,17 +107,15 @@ private fun Banner(viewModel: StoreViewModel) {
                     }
                 )
             }
-        }
-        is Response.Error -> {
-            AndroidView({ bannerView }) { banner ->
+            is Response.Error -> {
+                banner.hideProgress()
                 banner.setError(
                     message = response.message,
                     onRetryClick = { viewModel.getBannerItems() }
                 )
             }
-        }
-        is Response.Empty -> {
-            AndroidView({ bannerView }) { banner ->
+            is Response.Empty -> {
+                banner.hideProgress()
                 // We could create an empty state view that has an image and a tagline,
                 // but for now we show nothing.
                 val emptyStateView: View? = null

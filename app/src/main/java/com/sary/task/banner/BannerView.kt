@@ -33,6 +33,7 @@ class BannerView @JvmOverloads constructor(
     private val errorLabel: TextView
     private val retryBTN: View
     private val emptyStateContainer: ViewGroup
+    private val progress: View
 
     private var slides: List<Slide> = emptyList()
     private var bullets: Array<TextView>? = null
@@ -65,6 +66,7 @@ class BannerView @JvmOverloads constructor(
         errorLabel = view.findViewById(R.id.label_error)
         retryBTN = view.findViewById(R.id.btn_retry)
         emptyStateContainer = view.findViewById(R.id.empty_state_container)
+        progress = view.findViewById(R.id.progress)
 
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.BannerView)
         try {
@@ -151,6 +153,24 @@ class BannerView @JvmOverloads constructor(
     fun removeEmptyState() {
         emptyStateContainer.removeAllViews()
         emptyStateContainer.visibility = View.GONE
+        invalidate()
+        requestLayout()
+    }
+
+    /**
+     * Shows progress indicator in the center of the layout.
+     */
+    fun showProgress() {
+        progress.visibility = View.VISIBLE
+        invalidate()
+        requestLayout()
+    }
+
+    /**
+     * Hides the previously shown progress indicator.
+     */
+    fun hideProgress() {
+        progress.visibility = View.GONE
         invalidate()
         requestLayout()
     }
