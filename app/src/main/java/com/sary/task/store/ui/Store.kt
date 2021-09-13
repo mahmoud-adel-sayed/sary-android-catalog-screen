@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
 import com.sary.task.R
 import com.sary.task.banner.BannerView
@@ -54,6 +55,13 @@ fun Store(
         viewModel.getCatalog()
     }
 
+    val snackBarHostState = rememberSnackBarHostState()
+    val catalogErrorRetryAction = {
+        viewModel.getCatalog()
+        snackBarHostState.currentSnackbarData?.dismiss()
+        Unit
+    }
+
     LazyColumn(modifier) {
         item {
             Spacer(Modifier.statusBarsHeight())
@@ -71,9 +79,21 @@ fun Store(
             }
         }
         item {
-            Catalog(viewModel)
+            Catalog(snackBarHostState, viewModel)
             Spacer(modifier = Modifier.navigationBarsHeight(additional = 56.dp))
         }
+    }
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .navigationBarsPadding()
+        .padding(bottom = 56.dp)
+    ) {
+        ErrorSnackBar(
+            hostState = snackBarHostState,
+            onAction = catalogErrorRetryAction,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -126,8 +146,10 @@ private fun Banner(viewModel: StoreViewModel) {
 }
 
 @Composable
-private fun Catalog(viewModel: StoreViewModel) {
-    val snackBarHostState = rememberSnackBarHostState()
+private fun Catalog(
+    snackBarHostState: SnackbarHostState,
+    viewModel: StoreViewModel
+) {
     val scope = rememberCoroutineScope()
 
     viewModel.catalog.observeAsState().value?.let {
@@ -165,17 +187,6 @@ private fun Catalog(viewModel: StoreViewModel) {
                 // but for now we do nothing.
             }
         }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        ErrorSnackBar(
-            hostState = snackBarHostState,
-            onAction = {
-                viewModel.getCatalog()
-                snackBarHostState.currentSnackbarData?.dismiss()
-            },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }
 
