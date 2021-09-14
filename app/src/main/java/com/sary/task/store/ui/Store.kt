@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -48,7 +49,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Store(
     modifier: Modifier = Modifier,
-    viewModel: StoreViewModel = hiltViewModel()
+    viewModel: StoreViewModel = hiltViewModel(),
+    onCatalogSectionItemSelected: (SectionItem) -> Unit
 ) {
     LaunchedEffect(Unit) {
         viewModel.getBannerItems()
@@ -79,7 +81,7 @@ fun Store(
             }
         }
         item {
-            Catalog(snackBarHostState, viewModel)
+            Catalog(snackBarHostState, viewModel, onCatalogSectionItemSelected)
             Spacer(modifier = Modifier.navigationBarsHeight(additional = 56.dp))
         }
     }
@@ -148,7 +150,8 @@ private fun Banner(viewModel: StoreViewModel) {
 @Composable
 private fun Catalog(
     snackBarHostState: SnackbarHostState,
-    viewModel: StoreViewModel
+    viewModel: StoreViewModel,
+    onSectionItemSelected: (SectionItem) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -167,7 +170,9 @@ private fun Catalog(
             }
             is Response.Success -> {
                 val sections = it.data.result
-                sections.forEach { section -> CatalogSection(section = section) }
+                sections.forEach { section ->
+                    CatalogSection(section = section, onSectionItemSelected = onSectionItemSelected)
+                }
             }
             is Response.Error -> {
                 val snackBarActionLabel = stringResource(id = R.string.retry)
@@ -193,7 +198,8 @@ private fun Catalog(
 @Composable
 private fun CatalogSection(
     modifier: Modifier = Modifier,
-    section: CatalogSection
+    section: CatalogSection,
+    onSectionItemSelected: (SectionItem) -> Unit = { }
 ) {
     val background = if (section.dataType == CatalogSection.DATA_TYPE_SMART) {
         AppTheme.colors.cardBackground
@@ -218,9 +224,9 @@ private fun CatalogSection(
             }
             Spacer(modifier = Modifier.height(16.dp))
             when (section.uiType) {
-                CatalogSection.UI_TYPE_GRID -> GridCatalogSection(section)
-                CatalogSection.UI_TYPE_LINEAR -> LinearCatalogSection(section)
-                CatalogSection.UI_TYPE_SLIDER -> SliderCatalogSection(section)
+                CatalogSection.UI_TYPE_GRID -> GridCatalogSection(section, onSectionItemSelected)
+                CatalogSection.UI_TYPE_LINEAR -> LinearCatalogSection(section, onSectionItemSelected)
+                CatalogSection.UI_TYPE_SLIDER -> SliderCatalogSection(section, onSectionItemSelected)
             }
         }
     }
@@ -228,7 +234,10 @@ private fun CatalogSection(
 }
 
 @Composable
-private fun GridCatalogSection(section: CatalogSection) {
+private fun GridCatalogSection(
+    section: CatalogSection,
+    onSectionItemSelected: (SectionItem) -> Unit
+) {
     val rowItemsCount = section.rowItemsCount
 
      Column(modifier = Modifier.padding(horizontal = EDGE_PADDING / 2)) {
@@ -247,7 +256,8 @@ private fun GridCatalogSection(section: CatalogSection) {
                                  .weight(1f)
                                  .padding(4.dp),
                              item = section.data[index],
-                             dataType = section.dataType
+                             dataType = section.dataType,
+                             onSectionItemSelected = onSectionItemSelected
                          )
                      }
                  }
@@ -257,7 +267,10 @@ private fun GridCatalogSection(section: CatalogSection) {
 }
 
 @Composable
-private fun LinearCatalogSection(section: CatalogSection) {
+private fun LinearCatalogSection(
+    section: CatalogSection,
+    onSectionItemSelected: (SectionItem) -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = EDGE_PADDING / 2)
@@ -270,14 +283,18 @@ private fun LinearCatalogSection(section: CatalogSection) {
                     .size(width = 170.dp, height = 170.dp)
                     .padding(4.dp),
                 item = item,
-                dataType = section.dataType
+                dataType = section.dataType,
+                onSectionItemSelected = onSectionItemSelected
             )
         }
     }
 }
 
 @Composable
-private fun SliderCatalogSection(section: CatalogSection) {
+private fun SliderCatalogSection(
+    section: CatalogSection,
+    onSectionItemSelected: (SectionItem) -> Unit
+) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = EDGE_PADDING / 2)
     ) {
@@ -287,7 +304,8 @@ private fun SliderCatalogSection(section: CatalogSection) {
                     .size(width = 150.dp, height = 150.dp)
                     .padding(4.dp),
                 item = item,
-                dataType = section.dataType
+                dataType = section.dataType,
+                onSectionItemSelected = onSectionItemSelected
             )
         }
     }
@@ -297,21 +315,23 @@ private fun SliderCatalogSection(section: CatalogSection) {
 private fun SectionItem(
     modifier: Modifier = Modifier,
     item: SectionItem,
-    dataType: String
+    dataType: String,
+    onSectionItemSelected: (SectionItem) -> Unit
 ) {
     when (dataType) {
-        CatalogSection.DATA_TYPE_SMART -> SmartSectionItem(modifier, item)
-        CatalogSection.DATA_TYPE_GROUP -> GroupSectionItem(modifier, item)
-        CatalogSection.DATA_TYPE_BANNER -> BannerSectionItem(modifier, item)
+        CatalogSection.DATA_TYPE_SMART -> SmartSectionItem(modifier, item, onSectionItemSelected)
+        CatalogSection.DATA_TYPE_GROUP -> GroupSectionItem(modifier, item, onSectionItemSelected)
+        CatalogSection.DATA_TYPE_BANNER -> BannerSectionItem(modifier, item, onSectionItemSelected)
     }
 }
 
 @Composable
 private fun SmartSectionItem(
     modifier: Modifier = Modifier,
-    item: SectionItem
+    item: SectionItem,
+    onSectionItemSelected: (SectionItem) -> Unit = { }
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.clickable(onClick = { onSectionItemSelected(item) })) {
         Box(
             modifier = Modifier
                 .background(
@@ -342,30 +362,33 @@ private fun SmartSectionItem(
                 modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
             )
         }
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 @Composable
 private fun GroupSectionItem(
     modifier: Modifier = Modifier,
-    item: SectionItem
+    item: SectionItem,
+    onSectionItemSelected: (SectionItem) -> Unit = { }
 ) {
     NetworkImage(
         url = item.imageUrl,
         contentDescription = null,
-        modifier = modifier
+        modifier = modifier.clickable(onClick = { onSectionItemSelected(item) })
     )
 }
 
 @Composable
 private fun BannerSectionItem(
     modifier: Modifier = Modifier,
-    item: SectionItem
+    item: SectionItem,
+    onSectionItemSelected: (SectionItem) -> Unit = { }
 ) {
     NetworkImage(
         url = item.imageUrl,
         contentDescription = null,
-        modifier = modifier
+        modifier = modifier.clickable(onClick = { onSectionItemSelected(item) })
     )
 }
 
