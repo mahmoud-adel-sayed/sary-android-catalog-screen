@@ -236,30 +236,30 @@ private fun GridCatalogSection(
 ) {
     val rowItemsCount = section.rowItemsCount
 
-     Column(modifier = Modifier.padding(horizontal = EDGE_PADDING / 2)) {
-         val rowsCount = (section.data.size + rowItemsCount - 1) / rowItemsCount
-         for (i in 0 until rowsCount) {
-             Row {
-                 for (j in 0 until rowItemsCount) {
-                     val index = i * rowItemsCount + j
-                     if (index >= section.data.size) {
-                         Spacer(modifier = Modifier
-                             .weight(1f)
-                             .padding(4.dp))
-                     } else {
-                         SectionItem(
-                             modifier = Modifier
-                                 .weight(1f)
-                                 .padding(4.dp),
-                             item = section.data[index],
-                             dataType = section.dataType,
-                             onSectionItemSelected = onSectionItemSelected
-                         )
-                     }
-                 }
-             }
-         }
-     }
+    Column(modifier = Modifier.padding(horizontal = EDGE_PADDING / 2)) {
+        val rowsCount = (section.data.size + rowItemsCount - 1) / rowItemsCount
+        for (i in 0 until rowsCount) {
+            Row {
+                for (j in 0 until rowItemsCount) {
+                    val index = i * rowItemsCount + j
+                    if (index >= section.data.size) {
+                        Spacer(modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp))
+                    } else {
+                        SectionItem(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp),
+                            item = section.data[index],
+                            dataType = section.dataType,
+                            onSectionItemSelected = onSectionItemSelected
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
