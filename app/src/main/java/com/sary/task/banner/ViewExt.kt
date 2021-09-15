@@ -1,4 +1,4 @@
-package com.sary.task
+package com.sary.task.banner
 
 import android.content.Context
 import android.graphics.Color

@@ -31,12 +31,8 @@ import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
 import com.sary.task.R
-import com.sary.task.banner.BannerView
-import com.sary.task.banner.ImageLoadingListener
-import com.sary.task.banner.Slide
-import com.sary.task.banner.SlideView
+import com.sary.task.banner.*
 import com.sary.task.databinding.BannerSlideBinding
-import com.sary.task.loadImage
 import com.sary.task.store.data.model.CatalogSection
 import com.sary.task.store.data.model.SectionItem
 import com.sary.task.theme.AppTheme
