@@ -2,7 +2,7 @@ package com.sary.task.buildsrc
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha02"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha12"
     const val jdkDesugar = "com.android.tools:desugar_jdk_libs:1.0.9"
 
     object Accompanist {
