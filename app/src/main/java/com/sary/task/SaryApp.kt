@@ -1,5 +1,6 @@
 package com.sary.task
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,17 +74,10 @@ private fun BottomBar(
 private fun rememberMainTabs(): Array<MainTabs> = remember { MainTabs.values() }
 
 @Preview(name = "Bottom Bar")
+@Preview(name = "Bottom Bar - Dark Theme", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun BottomBarPreview() {
     AppTheme {
-        BottomBar(navController = rememberNavController(), tabs = rememberMainTabs())
-    }
-}
-
-@Preview(name = "Bottom Bar - Dark Theme")
-@Composable
-private fun BottomBarPreviewDark() {
-    AppTheme(darkTheme = true) {
         BottomBar(navController = rememberNavController(), tabs = rememberMainTabs())
     }
 }
