@@ -81,3 +81,12 @@ private fun BottomBarPreview() {
         BottomBar(navController = rememberNavController(), tabs = rememberMainTabs())
     }
 }
+
+@Preview(name = "Bottom Bar - Arabic Locale", locale = "ar")
+@Preview(name = "Bottom Bar - Arabic Locale - Dark Theme", locale = "ar", uiMode = UI_MODE_NIGHT_YES)
+@Composable
+private fun BottomBarArabicLocalePreview() {
+    AppTheme {
+        BottomBar(navController = rememberNavController(), tabs = rememberMainTabs())
+    }
+}
