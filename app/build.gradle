@@ -13,13 +13,12 @@ kapt {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.sary.task"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -81,7 +80,7 @@ dependencies {
     implementation Libs.AndroidX.Lifecycle.viewModelCompose
     implementation Libs.AndroidX.Lifecycle.livedata
 
-    implementation Libs.Accompanist.coil
+    implementation Libs.Coil.coilCompose
     implementation Libs.Accompanist.insets
 
     implementation Libs.Retrofit.retrofit

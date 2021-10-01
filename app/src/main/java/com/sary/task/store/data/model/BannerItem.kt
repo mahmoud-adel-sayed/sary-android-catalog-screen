@@ -34,7 +34,7 @@ data class BannerItem(
     val photoUrl: String,
 
     @field:SerializedName("link")
-    val link: String,
+    val link: String?,
 
     @field:SerializedName("level")
     val level: String,

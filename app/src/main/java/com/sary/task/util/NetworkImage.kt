@@ -13,17 +13,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import com.google.accompanist.coil.LocalImageLoader
-import com.google.accompanist.coil.rememberCoilPainter
-import com.google.accompanist.imageloading.ImageLoadState
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.ImagePainter
+import coil.compose.LocalImageLoader
+import coil.compose.rememberImagePainter
+import coil.size.OriginalSize
 import com.sary.task.R
 import com.sary.task.theme.AppTheme
 import com.sary.task.theme.compositedOnSurface
 
 /**
- * A wrapper around [Image] and [rememberCoilPainter], setting a
+ * A wrapper around [Image] and [rememberImagePainter], setting a
  * default [contentScale] and showing content while loading.
  */
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun NetworkImage(
     url: String,
@@ -33,9 +36,12 @@ fun NetworkImage(
     placeholderColor: Color? = AppTheme.colors.compositedOnSurface(0.2f)
 ) {
     Box(modifier) {
-        val painter = rememberCoilPainter(
-            request = url,
-            previewPlaceholder = R.drawable.coffee
+        val painter = rememberImagePainter(
+            data = url,
+            builder = {
+                size(OriginalSize)
+                placeholder(drawableResId = R.drawable.coffee)
+            }
         )
 
         Image(
@@ -45,7 +51,7 @@ fun NetworkImage(
             modifier = Modifier.fillMaxSize()
         )
 
-        if (painter.loadState is ImageLoadState.Loading && placeholderColor != null) {
+        if (painter.state is ImagePainter.State.Loading && placeholderColor != null) {
             Spacer(
                 modifier = Modifier
                     .matchParentSize()

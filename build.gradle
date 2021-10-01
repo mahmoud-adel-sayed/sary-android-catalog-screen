@@ -17,7 +17,6 @@ subprojects {
     repositories {
         google()
         mavenCentral()
-        jcenter()
 
         // Jetpack Compose SNAPSHOTS
         if (!Libs.AndroidX.Compose.snapshot.isEmpty()) {

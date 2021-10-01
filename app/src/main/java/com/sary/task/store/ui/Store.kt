@@ -113,7 +113,9 @@ private fun Banner(viewModel: StoreViewModel) {
                     Slide(
                         imageUrl = items[i].imageUrl,
                         onClick = {
-                            Toast.makeText(context, items[i].link, Toast.LENGTH_SHORT).show()
+                            items[i].link?.let {
+                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     )
                 }
