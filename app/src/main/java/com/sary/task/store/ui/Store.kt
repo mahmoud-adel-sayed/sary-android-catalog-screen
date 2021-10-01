@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -468,17 +469,10 @@ private val EDGE_PADDING = 24.dp
     uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-private fun GridSmartCatalogSectionPreview() {
+private fun GridSmartCatalogSectionPreview(
+    @PreviewParameter(GridSmartPreviewParameterProvider::class) section: CatalogSection
+) {
     AppTheme {
-        val section = CatalogSection(
-            id = 3,
-            title = "",
-            data = List(4) { i -> SectionItem(name = "Offers", imageUrl = "https://$i") },
-            showTitle = false,
-            dataType = CatalogSection.DATA_TYPE_SMART,
-            uiType = CatalogSection.UI_TYPE_GRID,
-            rowItemsCount = 4
-        )
         CatalogSection(section = section)
     }
 }
@@ -493,17 +487,10 @@ private fun GridSmartCatalogSectionPreview() {
     uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-private fun LinearCatalogSectionPreview() {
+private fun LinearCatalogSectionPreview(
+    @PreviewParameter(LinearPreviewParameterProvider::class) section: CatalogSection
+) {
     AppTheme {
-        val section = CatalogSection(
-            id = 171,
-            title = "Partners",
-            data = List(5) { i -> SectionItem(imageUrl = "https://$i") },
-            showTitle = true,
-            dataType = CatalogSection.DATA_TYPE_GROUP,
-            uiType = CatalogSection.UI_TYPE_LINEAR,
-            rowItemsCount = 4
-        )
         LazyColumn {
             item { CatalogSection(section = section) }
         }
@@ -520,17 +507,10 @@ private fun LinearCatalogSectionPreview() {
     uiMode = UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun GridTwoColumnsCatalogSectionPreview() {
+private fun GridTwoColumnsCatalogSectionPreview(
+    @PreviewParameter(GridTwoColumnsPreviewParameterProvider::class) section: CatalogSection
+) {
     AppTheme {
-        val section = CatalogSection(
-            id = 147,
-            title = "Categories",
-            data = List(8) { i -> SectionItem(imageUrl = "https://$i") },
-            showTitle = true,
-            dataType = CatalogSection.DATA_TYPE_BANNER,
-            uiType = CatalogSection.UI_TYPE_GRID,
-            rowItemsCount = 2
-        )
         LazyColumn {
             item { CatalogSection(section = section) }
         }
@@ -547,17 +527,10 @@ private fun GridTwoColumnsCatalogSectionPreview() {
     uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-private fun GridFourColumnsCatalogSectionPreview() {
+private fun GridFourColumnsCatalogSectionPreview(
+    @PreviewParameter(GridFourColumnsPreviewParameterProvider::class) section: CatalogSection
+) {
     AppTheme {
-        val section = CatalogSection(
-            id = 148,
-            title = "",
-            data = List(11) { i -> SectionItem(imageUrl = "https://$i") },
-            showTitle = false,
-            dataType = CatalogSection.DATA_TYPE_BANNER,
-            uiType = CatalogSection.UI_TYPE_GRID,
-            rowItemsCount = 4
-        )
         LazyColumn {
             item { CatalogSection(section = section) }
         }
@@ -574,17 +547,10 @@ private fun GridFourColumnsCatalogSectionPreview() {
     uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-private fun GridThreeColumnsCatalogSectionPreview() {
+private fun GridThreeColumnsCatalogSectionPreview(
+    @PreviewParameter(GridThreeColumnsPreviewParameterProvider::class) section: CatalogSection
+) {
     AppTheme {
-        val section = CatalogSection(
-            id = 13,
-            title = "By Business Type",
-            data = List(5) { i -> SectionItem(imageUrl = "https://$i") },
-            showTitle = true,
-            dataType = CatalogSection.DATA_TYPE_GROUP,
-            uiType = CatalogSection.UI_TYPE_GRID,
-            rowItemsCount = 3
-        )
         LazyColumn {
             item { CatalogSection(section = section) }
         }
@@ -601,17 +567,10 @@ private fun GridThreeColumnsCatalogSectionPreview() {
     uiMode = UI_MODE_NIGHT_YES
 )
 @Composable
-private fun SliderCatalogSectionPreview() {
+private fun SliderCatalogSectionPreview(
+    @PreviewParameter(SliderPreviewParameterProvider::class) section: CatalogSection
+) {
     AppTheme {
-        val section = CatalogSection(
-            id = 1,
-            title = "Categories",
-            data = List(10) { i -> SectionItem(imageUrl = "https://$i") },
-            showTitle = true,
-            dataType = CatalogSection.DATA_TYPE_GROUP,
-            uiType = CatalogSection.UI_TYPE_SLIDER,
-            rowItemsCount = 2
-        )
         CatalogSection(section = section)
     }
 }
